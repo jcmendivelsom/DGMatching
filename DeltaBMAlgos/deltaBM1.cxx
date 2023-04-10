@@ -13,7 +13,7 @@ class DeltaNode
 public:
     int a;
     int b;
-    std::vector<Interval> childrenIntvls;
+    std::vector<Interval> childrenIntervals;
     std::vector<DeltaNode *> childrens;
     std::vector<int> positions;
     DeltaNode *link;
@@ -27,33 +27,33 @@ public:
     {
         Interval inDeltaC = Interval(std::max(MIN_CHAR, c - delta), std::min(MAX_CHAR, c + delta));
 
-        for (int i = 0; i < childrenIntvls.size(); ++i)
+        for (int i = 0; i < childrenIntervals.size(); ++i)
         {
-            if (!(childrenIntvls[i].second < inDeltaC.first || inDeltaC.second < childrenIntvls[i].first))
+            if (!(childrenIntervals[i].second < inDeltaC.first || inDeltaC.second < childrenIntervals[i].first))
             {
-                childrenIntvls[i].first = std::min(childrenIntvls[i].first, inDeltaC.first);
-                childrenIntvls[i].second = std::max(childrenIntvls[i].second, inDeltaC.second);
+                childrenIntervals[i].first = std::min(childrenIntervals[i].first, inDeltaC.first);
+                childrenIntervals[i].second = std::max(childrenIntervals[i].second, inDeltaC.second);
                 return childrens[i];
             }
         }
         // If get here means that we do not find a possible path
-        childrenIntvls.push_back(inDeltaC);
+        childrenIntervals.push_back(inDeltaC);
         DeltaNode *newChild = new DeltaNode(inDeltaC.first, inDeltaC.second);
         childrens.push_back(newChild);
         return newChild;
     }
     DeltaNode *getTransition(int c)
     {
-        for (int i = 0; i < childrenIntvls.size(); ++i)
+        for (int i = 0; i < childrenIntervals.size(); ++i)
         {
-            if (childrenIntvls[i].first <= c && c <= childrenIntvls[i].second)
+            if (childrenIntervals[i].first <= c && c <= childrenIntervals[i].second)
                 return childrens[i];
         }
         return NULL;
     }
     void printNode()
     {
-        for (auto intvl : childrenIntvls)
+        for (auto intvl : childrenIntervals)
             std::cout << "[" << intvl.first - (int)' ' << ", " << intvl.second - (int)' ' << "] ";
         std::cout << "{ ";
         for (auto pos : positions)
@@ -143,7 +143,7 @@ std::string deltaBM1SkipSearch(std::string t, std::string p, unsigned int delta)
     std::cout << "---------------------------" << std::endl;
     // Searching
     int i = m, k = trie->k;
-    std::vector<int> posiblePos;
+    std::vector<int> possiblePos;
     while (i < t.length())
     {
         if (trie->travelWith(t.substr(i - k, k)) == NULL)
@@ -151,16 +151,16 @@ std::string deltaBM1SkipSearch(std::string t, std::string p, unsigned int delta)
             i += m - k + 1;
             continue;
         }
-        posiblePos = trie->travelWith(t.substr(i - k, k))->positions;
-        for (int j = 0; j < posiblePos.size(); ++j)
+        possiblePos = trie->travelWith(t.substr(i - k, k))->positions;
+        for (int j = 0; j < possiblePos.size(); ++j)
         {
-            if (i - k - posiblePos[j] + m > t.length())
+            if (i - k - possiblePos[j] + m > t.length())
                 continue;
-            std::cout << t.substr(i - k - posiblePos[j], m);
-            if (isDeltaMatch(p, t.substr(i - k - posiblePos[j], m), delta))
+            std::cout << t.substr(i - k - possiblePos[j], m);
+            if (isDeltaMatch(p, t.substr(i - k - possiblePos[j], m), delta))
             {
                 std::cout<< " Ok " << '\n';
-                answ += std::to_string(i - k - posiblePos[j]) + " ";
+                answ += std::to_string(i - k - possiblePos[j]) + " ";
             } else {
                 std::cout<< " X " << '\n';
             }

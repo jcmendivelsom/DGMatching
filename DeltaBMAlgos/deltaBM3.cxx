@@ -15,7 +15,7 @@ bool isDeltaMatch(std::string x, std::string y, unsigned int delta)
     return true;
 }
 // Compute the hash of a string -> Just the sum of the characters
-long int hash(std::string x)
+long hash(std::string x)
 {
     long int sum = 0L;
     for (int i = 0; i < x.length(); i++)
