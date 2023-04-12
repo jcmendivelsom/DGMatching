@@ -1,7 +1,5 @@
-#include "Alphabet.h"
 #include "BitwiseAlgos.h"
-#include <iostream>
-#include <vector>
+
 /*
     -> shiftAnd computes all the Delta matches of a pattern 'p' in a text 't' by
    doing some bitwise operations using a precomputed table for every element in
@@ -15,7 +13,7 @@ std::vector<int> BitwiseAlgos::shiftAnd(std::wstring t, std::wstring p,
   if (m <= 0 || m > 64 || m > n || delta < 0) {
     throw std::invalid_argument("Invalid parameters! ");
   }
-  alph.print();
+  // alph.print();
   // PREPROCESSING PHASE
   std::vector<int> answ;
   long DTable[alph.size()]; // Table for every element in the alphabet.
@@ -25,11 +23,6 @@ std::vector<int> BitwiseAlgos::shiftAnd(std::wstring t, std::wstring p,
   for (int i = 0; i < alph.size(); ++i) {
     DTable[i] = 0;
     for (int j = 0; j < m; ++j) {
-      if (alph.getIndex(p[j]) == -1) {
-        std::wcout << "The following character is not in the alphabet: " << p[j]
-                   << std::endl;
-        throw std::invalid_argument("Invalid parameters! ");
-      }
       // Put a one in the j^th position if there is a Delta match with p[i].
       DTable[i] |=
           (std::abs(alph.getValueByI(i) - alph.getValue(p[j])) <= delta) << j;
@@ -38,11 +31,6 @@ std::vector<int> BitwiseAlgos::shiftAnd(std::wstring t, std::wstring p,
 
   // SEARCHING PHASE
   for (int i = 0; i < n; ++i) {
-    if (alph.getIndex(t[i]) == -1) {
-      std::wcout << "The following character is not in the alphabet: " << t[i]
-                 << std::endl;
-      throw std::invalid_argument("Invalid parameters! ");
-    }
     // Compute the change led by the entering character.
     DState = ((DState << 1) | 1L) & DTable[alph.getIndex(t[i])];
     // One in the m-1 position means we found a Delta match.

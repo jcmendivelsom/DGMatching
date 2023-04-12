@@ -10,12 +10,8 @@ configure_file(StrMatchConfig.h.in StrMatchConfig.h)
 # ADD EXECUTABLE
 add_executable(StrMatching main.cxx)
 # ADD LIBRARIES !!!
-add_subdirectory(BitwiseAlgos)
-list(APPEND EXTRA_LIBS BitwiseAlgos)
-add_subdirectory(DeltaBMAlgos)
-list(APPEND EXTRA_LIBS DeltaBMAlgos)
-add_subdirectory(Alphabet)
-list(APPEND EXTRA_LIBS Alphabet)
+add_subdirectory(MatchingAlgos)
+list(APPEND EXTRA_LIBS MatchingAlgos)
 # INCLUDE LIBS
 target_link_libraries(StrMatching PUBLIC ${EXTRA_LIBS})
 target_include_directories(StrMatching PUBLIC

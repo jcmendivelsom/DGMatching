@@ -1,0 +1,72 @@
+[
+{
+  "directory": "/home/luvakor/unal/dgMatching/build",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/build -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/StrMatching.dir/main.cxx.o -c /home/luvakor/unal/dgMatching/main.cxx",
+  "file": "/home/luvakor/unal/dgMatching/main.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/MatchingAlgos.dir/matchingAlgos.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/matchingAlgos.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/matchingAlgos.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/Alphabet",
+  "command": "/usr/bin/g++-10    -g   -std=gnu++17 -o CMakeFiles/Alphabet.dir/alphabet.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet/alphabet.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet/alphabet.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/BitwiseAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/BitwiseAlgos.dir/shiftPlus.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftPlus.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftPlus.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/BitwiseAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/BitwiseAlgos.dir/shiftAnd.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftAnd.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftAnd.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/BitwiseAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/BitwiseAlgos.dir/shiftOr.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftOr.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/shiftOr.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/BitwiseAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/BitwiseAlgos.dir/forwardScan.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/forwardScan.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/forwardScan.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/BitwiseAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/BitwiseAlgos.dir/backwardScan.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/backwardScan.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos/backwardScan.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaBM1.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM1.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM1.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaBM2.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM2.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM2.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaBM3.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM3.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaBM3.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaTunedBM.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaTunedBM.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaTunedBM.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaFastSearch.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaFastSearch.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaFastSearch.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaForwardFastSearch.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaForwardFastSearch.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaForwardFastSearch.cxx"
+}
+]

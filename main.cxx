@@ -1,4 +1,3 @@
-#include "Alphabet.h"
 #include "BitwiseAlgos.h"
 #include "DeltaBMAlgos.h"
 #include "StrMatchConfig.h"
@@ -89,6 +88,27 @@ int main(int argc, char *argv[]) {
       std::wcin >> delta >> gamma;
       matchIndexes = deltaAlgos.deltaTunedBM(y, x, delta, gamma);
       std::wcout << "Results with Delta Tunned Boyer Moore: " << std::endl;
+      break;
+    case 3:
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      matchIndexes = deltaAlgos.deltaBM3(y, x, delta, gamma);
+      std::wcout << "Results with Delta Boyer Moore 3 (Hash): " << std::endl;
+      break;
+    case 4:
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      matchIndexes = deltaAlgos.deltaFastSearch(y, x, delta, gamma);
+      std::wcout << "Results with Delta Fast Search: " << std::endl;
+      break;
+    case 5:
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      matchIndexes = deltaAlgos.deltaForwardFastSearch(y, x, delta, gamma);
+      std::wcout << "Results with Delta Forward Fast Search: " << std::endl;
       break;
     default:
       std::wcout << "Bad init parameter! :(" << std::endl;

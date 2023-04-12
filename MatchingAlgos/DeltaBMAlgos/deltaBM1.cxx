@@ -1,13 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
+#include "DeltaBMAlgos.h"
 
-#define MAX_CHAR 256
-#define MIN_CHAR 0
-typedef std::pair<int, int> Interval;
+
 /* Delta Node: [a, b] -> Interval of acceptance
                Children -> map of pointers to child nodes
-*/
+
 class DeltaNode
 {
 public:
@@ -116,15 +112,7 @@ public:
         return traveler;
     }
 };
-bool isDeltaMatch(std::string x, std::string y, unsigned int delta)
-{
-    if (x.length() != y.length())
-        return false;
-    for (int i = 0; i < x.length(); ++i)
-        if (std::abs(x[i] - y[i]) > delta)
-            return false;
-    return true;
-}
+
 std::string deltaBM1SkipSearch(std::string t, std::string p, unsigned int delta)
 {
     int m = p.length();
@@ -180,3 +168,4 @@ int main()
     std::cin >> delta;
     std::cout << deltaBM1SkipSearch(y, x, delta) << std::endl;
 }
+*/

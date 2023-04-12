@@ -1,8 +1,4 @@
-#include "Alphabet.h"
 #include "BitwiseAlgos.h"
-#include <cmath>
-#include <iostream>
-#include <vector>
 
 /*
     -> forwardScan computes all the Delta-Gamma matches of a pattern 'p' in a
@@ -26,14 +22,9 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring t, std::wstring p,
   // Bitstrings that will help us to calculate the Delta and Gama matches.
   long DState = 0, auxHighBits = 0, H = 0;
 
-  for (int i = 0; i <= alph.size(); ++i) {
+  for (int i = 0; i < alph.size(); ++i) {
     BTable[i] = 0;
     for (int j = m - 1; j >= 0; --j) {
-      if (alph.getIndex(p[j]) == -1) {
-        std::wcout << "The following character is not in the alphabet: " << p[j]
-                   << std::endl;
-        throw std::invalid_argument("Invalid parameters! ");
-      }
       // Check if there is a Delta match. If so, save the difference, otherwise
       // save Gamma + 1
       if (std::abs(alph.getValueByI(i) - alph.getValue(p[j])) <= delta)
@@ -50,11 +41,6 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring t, std::wstring p,
   // SEARCHING PHASE
   DState = auxHighBits;
   for (int j = 0; j < n; ++j) {
-    if (alph.getIndex(t[j]) == -1) {
-      std::wcout << "The following character is not in the alphabet: " << t[j]
-                 << std::endl;
-      throw std::invalid_argument("Invalid parameters! ");
-    }
     // Shift l bits to the left and set those l bits as 2^(l-1)-(Gamma+1)
     DState = (DState << l) | ((1L << l - 1) - (gamma + 1));
     H = DState & auxHighBits;

@@ -1,8 +1,4 @@
-#include "Alphabet.h"
 #include "BitwiseAlgos.h"
-#include <cmath>
-#include <iostream>
-#include <vector>
 
 /*
     -> shiftPlus computes all the Delta-Gamma matches of a pattern 'p' in a text
@@ -34,11 +30,6 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring t, std::wstring p,
     DTable[i] = 0;
     GTable[i] = 0;
     for (int j = 0; j < m; ++j) {
-      if (alph.getIndex(p[j]) == -1) {
-        std::wcout << "The following character is not in the alphabet: " << p[j]
-                   << std::endl;
-        throw std::invalid_argument("Invalid parameters! ");
-      }
       // Check if there is a Delta match.
       deltaComp = std::abs(alph.getValueByI(i) - alph.getValue(p[j])) <= delta;
       // Move the necessary bits to the left.
@@ -53,11 +44,6 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring t, std::wstring p,
 
   // SEARCHING PHASE
   for (int i = 0; i < n; ++i) {
-    if (alph.getIndex(t[i]) == -1) {
-      std::wcout << "The following character is not in the alphabet: " << t[i]
-                 << std::endl;
-      throw std::invalid_argument("Invalid parameters! ");
-    }
     // Compute the change led by the entering character.
     DState = ((DState << 1) | 1L) & DTable[alph.getIndex(t[i])];
     // Add in the first bits the char difference.
