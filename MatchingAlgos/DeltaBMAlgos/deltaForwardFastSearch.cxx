@@ -1,5 +1,11 @@
 #include "DeltaBMAlgos.h"
 
+/*
+    deltaForwardGoodSuffix returns a int table containing in position (j, c) the
+   minimum k that: p[j-k ... m-k-1] is a 2 * delta suffix of p[j ... m-1] and if
+   k<=j-1 then p[j-1]!=p[j-1-k] and p[m-k] delta matches c, where m is the
+   length of 'p'.
+*/
 std::vector<std::vector<int>>
 DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring p, int delta,
                                      std::vector<int> dBC) {
@@ -10,22 +16,21 @@ DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring p, int delta,
   std::vector<int> dSuffix = deltaSuffix(p, 2 * delta);
   for (int j = m - 1; j >= 0; --j) {
     for (int c = 0; c < alph.size(); ++c)
-      if (dBC[c] != m)
-        for (int k = 1; k <= m; ++k) {
-          // Check the condition p[m-k] matches the character of index c
-          if (std::abs(alph.getValue(p[m - k]) - alph.getValueByI(c)) > delta)
-            continue;
-          // Check the condition if k<=j-1 then p[j-1]!=p[j-1-k]
-          if (k <= j - 1 &&
-              alph.getValue(p[j - 1]) == alph.getValue(p[j - 1 - k]))
-            continue;
-          // Check if the substring of 'p' terminated in m-k-1 of length m-j is
-          // a 2*Delta suffix of 'p'
-          if (m - j <= dSuffix[m - k - 1]) {
-            dFGS[j][c] = k;
-            break;
-          }
+      for (int k = dBC[c] + 1; k <= m; ++k) {
+        // Check the condition if k<=j-1 then p[j-1]!=p[j-1-k]
+        if (k <= j - 1 &&
+            alph.getValue(p[j - 1]) == alph.getValue(p[j - 1 - k]))
+          continue;
+        // Check the condition p[m-k] matches the character of index c
+        if (std::abs(alph.getValue(p[m - k]) - alph.getValueByI(c)) > delta)
+          continue;
+        // Check if the substring of 'p' terminated in m-k-1 of length m-j is
+        // a 2*Delta suffix of 'p'
+        if (std::min(m - j, m - k) <= dSuffix[m - k - 1]) {
+          dFGS[j][c] = k;
+          break;
         }
+      }
   }
 
   // Print Forward Good Suffix Table
@@ -45,6 +50,11 @@ DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring p, int delta,
   return dFGS;
 }
 
+/*
+    -> deltaForwardFastSearch returns the indices of all Delta-Gamma matches of 'p' in
+   't' by shifting using delta Bad Character Rule, then checking naively and
+   moving by Forward Good Suffix Rule.
+*/
 std::vector<int> DeltaBMAlgos::deltaForwardFastSearch(std::wstring t,
                                                       std::wstring p, int delta,
                                                       int gamma) {

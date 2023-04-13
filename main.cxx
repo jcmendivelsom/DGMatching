@@ -1,5 +1,6 @@
 #include "BitwiseAlgos.h"
 #include "DeltaBMAlgos.h"
+#include "OccurrenceAlgos.h"
 #include "StrMatchConfig.h"
 #include <iostream>
 
@@ -109,6 +110,30 @@ int main(int argc, char *argv[]) {
       std::wcin >> delta >> gamma;
       matchIndexes = deltaAlgos.deltaForwardFastSearch(y, x, delta, gamma);
       std::wcout << "Results with Delta Forward Fast Search: " << std::endl;
+      break;
+    default:
+      std::wcout << "Bad init parameter! :(" << std::endl;
+      return 1;
+    }
+    break;
+  }
+  case 'o':
+  case 'O': {
+    OccurrenceAlgos occurAlgos = OccurrenceAlgos(alphPath);
+    switch (inputValue) {
+    case 0:
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      matchIndexes = occurAlgos.bruteForce(y, x, delta, gamma);
+      std::wcout << "Results with Brute Force: " << std::endl;
+      break;
+    case 1:
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      matchIndexes = occurAlgos.deltaSkipSearch(y, x, delta, gamma);
+      std::wcout << "Results with Delta Skip Search: " << std::endl;
       break;
     default:
       std::wcout << "Bad init parameter! :(" << std::endl;

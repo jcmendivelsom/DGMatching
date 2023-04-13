@@ -1,45 +1,13 @@
 #include "DeltaBMAlgos.h"
 
 /*
-    -> sumDeltaMatch return the sum of the value differences char. by char. But
-   if find a Delta mismatch returns -1.
-*/
-int DeltaBMAlgos::sumDeltaMatch(std::wstring x, std::wstring y, int delta) {
-  int sum = 0;
-  if (x.length() != y.length() || delta < 0)
-    return -1;
-  for (int i = 0; i < x.length(); ++i) {
-    if (std::abs(alph.getValue(x[i]) - alph.getValue(y[i])) > delta)
-      return -1;
-    sum += std::abs(alph.getValue(x[i]) - alph.getValue(y[i]));
-  }
-  return sum;
-}
-
-/*
-     -> isDeltaGammaMatch return whether 'x' Delta match 'y' or not. If Gamma is
-   negative just check the Delta match.
-*/
-bool DeltaBMAlgos::isDeltaGammaMatch(std::wstring x, std::wstring y, int delta,
-                                     int gamma = -1) {
-  int aux = sumDeltaMatch(x, y, delta);
-  return 0 <= aux && (aux <= gamma || gamma < 0);
-}
-
-/*
      -> minDeltaMatch compute the first index of 'p' from back to front that
    Delta matches 'a'.
 */
-int DeltaBMAlgos::backMinDeltaMatch(std::wstring a, std::wstring p, int delta,
-                                    bool justSuffix) {
+int DeltaBMAlgos::backMinDeltaMatch(wchar_t a, std::wstring p, int delta) {
   int m = p.length();
-  int k = a.length();
-  if (k > m)
-    return m;
-  if (justSuffix)
-    return isDeltaGammaMatch(a, p.substr(m - k), delta);
-  for (int i = m - k; i >= 0; --i) {
-    if (isDeltaGammaMatch(a, p.substr(i, k), delta))
+  for (int i = m - 1; i >= 0; --i) {
+    if (std::abs(alph.getValue(a) - alph.getValue(p[i])) <= delta)
       return m - (i + 1);
   }
   return m;
@@ -61,8 +29,8 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring p, int delta) {
         // For each index, check if not calculated. If so, compute
         // backMinDeltaMatch
         if (!visitedC[inPlusDelta]) {
-          dBC[inPlusDelta] = backMinDeltaMatch(
-              std::wstring(1, alph.getWChar(inPlusDelta)), p, delta);
+          dBC[inPlusDelta] =
+              backMinDeltaMatch(alph.getWChar(inPlusDelta), p, delta);
           visitedC[inPlusDelta] = true;
         }
       }
@@ -72,19 +40,19 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring p, int delta) {
         // For each index, check if not calculated. If so, compute
         // backMinDeltaMatch
         if (!visitedC[inMinusDelta]) {
-          dBC[inMinusDelta] = backMinDeltaMatch(
-              std::wstring(1, alph.getWChar(inMinusDelta)), p, delta);
+          dBC[inMinusDelta] =
+              backMinDeltaMatch(alph.getWChar(inMinusDelta), p, delta);
           visitedC[inMinusDelta] = true;
         }
       }
     }
   }
-
-  // Print the Delta Bad Character Table
-  for (int i = 0; i < dBC.size(); ++i)
-    std::wcout << " || " << alph.getWChar(i) << " " << dBC[i];
-  std::wcout << std::endl;
-  
+  /*
+    // Print the Delta Bad Character Table
+    for (int i = 0; i < dBC.size(); ++i)
+      std::wcout << " || " << alph.getWChar(i) << " " << dBC[i];
+    std::wcout << std::endl;
+    */
   return dBC;
 }
 
@@ -106,7 +74,7 @@ std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring t, std::wstring p,
   std::vector<int> dBCShift = deltaBadCharacter(p, delta);
 
   // First shift
-  int s = backMinDeltaMatch(p.substr(m - 1, 1), p.substr(0, m - 1), 2 * delta);
+  int s = backMinDeltaMatch(p[m - 1], p.substr(0, m - 1), 2 * delta);
   s += 1;
   // Add to the end of the text p[m-1]^m.
   t += std::wstring(m, p[m - 1]);

@@ -8,10 +8,7 @@
 class DeltaBMAlgos : public MatchingAlgos {
 
   // DELTA TUNED BOYER MOORE
-  int sumDeltaMatch(std::wstring x, std::wstring y, int delta);
-  bool isDeltaGammaMatch(std::wstring x, std::wstring y, int delta, int gamma);
-  int backMinDeltaMatch(std::wstring a, std::wstring p, int delta,
-                        bool justSuffix = false);
+  int backMinDeltaMatch(wchar_t a, std::wstring p, int delta);
   std::vector<int> deltaBadCharacter(std::wstring p, int delta);
   // DELTA FAST SEARCH
   std::vector<int> deltaSuffix(std::wstring p, int delta);

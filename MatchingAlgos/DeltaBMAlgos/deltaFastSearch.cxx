@@ -19,11 +19,11 @@ std::vector<int> DeltaBMAlgos::deltaSuffix(std::wstring p, int delta) {
     dSuffix[i] = j;
   }
   /*
-  // Print Suffix Table
-  std::wcout << "-------------------" << '\n';
-  for (int i = 0; i < m; ++i)
-    std::wcout << p[i] << " Suff: " << dSuffix[i] << std::endl;
-  std::wcout << "-------------------" << '\n';
+    // Print Suffix Table
+    std::wcout << "-------------------" << '\n';
+    for (int i = 0; i < m; ++i)
+      std::wcout << p[i] << " Suff: " << dSuffix[i] << std::endl;
+    std::wcout << "-------------------" << '\n';
   */
   return dSuffix;
 }
@@ -43,7 +43,7 @@ std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring p, int delta) {
         continue;
       // Check if the substring of 'p' terminated in m-k-1 of length m-j is a
       // 2*Delta suffix of 'p'
-      if (m - j <= dSuffix[m - k - 1]) {
+      if (std::min(m - j, m - k) <= dSuffix[m - k - 1]) {
         dGS[j] = k;
         break;
       }
