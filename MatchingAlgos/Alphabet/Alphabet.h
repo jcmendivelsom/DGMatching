@@ -18,6 +18,7 @@ class Alphabet {
 
 public:
   Alphabet(std::string filePath = PATH_DEFAULT_ALPH);
+  Alphabet(int begin, int end, int step = 1);
   int getValue(wchar_t c);
   int getValueByI(int i);
   int getIndex(wchar_t c);

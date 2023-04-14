@@ -1,5 +1,18 @@
 #include "Alphabet.h"
 
+Alphabet::Alphabet(int begin, int end, int step) {
+  int index = 0, num;
+  for (num = begin; num <= end; num += step) {
+    // Save in the map the values.
+    alphToValues[(long)num] = {num, index};
+    indexToAlph[index] = (long)num;
+    valueToIndices[num].push_back(index);
+    index++;
+  }
+  minVALUE = begin;
+  maxVALUE = num;
+}
+
 Alphabet::Alphabet(std::string filePath) {
   /* If your native locale doesn't use UTF-8 encoding
    * you need to replace the empty string with a
@@ -48,6 +61,7 @@ Alphabet::Alphabet(std::string filePath) {
   }
   paramFileW.close();
 }
+
 // Return the VALUE of certain character. If char. 'c' is not in the alphabet
 // return INT32_MIN.
 int Alphabet::getValue(wchar_t c) {
@@ -68,6 +82,7 @@ int Alphabet::getValueByI(int i) {
     throw std::invalid_argument("Invalid character! ");
   }
 }
+
 // Return the INDEX of certain character. If char. 'c' is not in the alphabet
 // return -1.
 int Alphabet::getIndex(wchar_t c) {
@@ -79,6 +94,7 @@ int Alphabet::getIndex(wchar_t c) {
     throw std::invalid_argument("Invalid character! ");
   }
 }
+
 // Return the WCHAR of certain index. If index. 'i' is not in the alphabet
 // return ''.
 wchar_t Alphabet::getWChar(int i) {
@@ -90,6 +106,7 @@ wchar_t Alphabet::getWChar(int i) {
     throw std::invalid_argument("Invalid character! ");
   }
 }
+
 // Get all the char indices that have that have 'val' as value.
 std::vector<int> Alphabet::getIndicesByVal(int val) {
   try {
@@ -98,8 +115,10 @@ std::vector<int> Alphabet::getIndicesByVal(int val) {
     return {};
   }
 }
+
 // Size of the alphabet (number of characters.)
 int Alphabet::size() { return alphToValues.size(); }
+
 // Print the whole alphabet.
 void Alphabet::print() {
   for (const auto &elem : alphToValues) {
@@ -107,6 +126,7 @@ void Alphabet::print() {
                << elem.second.second << "\n";
   }
 }
+
 // Getters of the Min and Max value.
 int Alphabet::getMaxValue() { return maxVALUE; }
 int Alphabet::getMinValue() { return minVALUE; }
