@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
   std::string alphPath;
   // Allow receive UTF-8 characters by console.
   std::locale::global(std::locale(""));
-  std::cout.imbue(std::locale(""));
-  std::cin.imbue(std::locale(""));
+  std::wcout.imbue(std::locale(""));
+  std::wcin.imbue(std::locale(""));
   if (argc < 3) {
     // Version
     std::wcout << argv[0] << " Version " << StrMatching_VERSION_MAJOR << "."
@@ -30,8 +30,7 @@ int main(int argc, char *argv[]) {
     alphPath = argv[3];
   }
 
-  MatchingAlgos matchAlgos = MatchingAlgos(alphPath);
-  std::wstring y, x, pathText;
+  std::wstring yIn, xIn, pathText;
   int delta, gamma, inputT, numAlpBounds[3];
   bool numCase = false;
   std::vector<int> matchIndexes;
@@ -41,11 +40,11 @@ int main(int argc, char *argv[]) {
   std::wcin >> inputT;
   switch (inputT) {
   case 0:
-    std::wcin >> y;
+    std::wcin >> yIn;
     break;
   case 1:
     std::wcin >> pathText;
-    y = matchAlgos.getText(std::string(pathText.begin(), pathText.end()));
+    yIn = getText(std::string(pathText.begin(), pathText.end()));
     break;
   case 2:
     numCase = true;
@@ -53,7 +52,7 @@ int main(int argc, char *argv[]) {
     std::wcout << "Enter the bounds of your Alphabet: (Begin) (End)"
                << std::endl;
     std::wcin >> numAlpBounds[0] >> numAlpBounds[1];
-    y = matchAlgos.getText(std::string(pathText.begin(), pathText.end()), true);
+    yIn = getText(std::string(pathText.begin(), pathText.end()), true);
     break;
   default:
     std::wcout << "Bad init parameter! :(" << std::endl;
@@ -67,14 +66,17 @@ int main(int argc, char *argv[]) {
     std::wstringstream ss(pathText);
     long n;
     while (ss >> n) {
-      x += static_cast<wchar_t>(n);
+      xIn += static_cast<wchar_t>(n);
       if (ss.peek() == L',')
         ss.ignore();
     }
     // std::wcout << y << std::endl;
     // std::wcout << x << std::endl;
   } else
-    std::wcin >> x;
+    std::wcin >> xIn;
+
+  std::wstring_view y(yIn);
+  std::wstring_view x(xIn);
 
   // Unsync the I/O of C and C++.
   std::ios_base::sync_with_stdio(false);
@@ -83,12 +85,9 @@ int main(int argc, char *argv[]) {
   switch (algoType) {
   case 'B':
   case 'b': {
-    BitwiseAlgos bitAlgos;
-    if (numCase)
-      bitAlgos = BitwiseAlgos(numAlpBounds[0], numAlpBounds[1]);
-    else
-      bitAlgos = BitwiseAlgos(alphPath);
-
+    BitwiseAlgos bitAlgos = numCase
+                                ? BitwiseAlgos(numAlpBounds[0], numAlpBounds[1])
+                                : BitwiseAlgos(alphPath);
     switch (inputValue) {
     case 0: {
       auto start = std::chrono::high_resolution_clock::now();
@@ -164,12 +163,9 @@ int main(int argc, char *argv[]) {
   }
   case 'd':
   case 'D': {
-    DeltaBMAlgos deltaAlgos;
-    if (numCase)
-      deltaAlgos = DeltaBMAlgos(numAlpBounds[0], numAlpBounds[1]);
-    else
-      deltaAlgos = DeltaBMAlgos(alphPath);
-
+    DeltaBMAlgos deltaAlgos =
+        numCase ? DeltaBMAlgos(numAlpBounds[0], numAlpBounds[1])
+                : DeltaBMAlgos(alphPath);
     switch (inputValue) {
     case 0: {
       std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
@@ -183,6 +179,20 @@ int main(int argc, char *argv[]) {
           std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
               .count();
       std::wcout << "Results with Delta Tunned Boyer Moore: " << std::endl;
+      break;
+    }
+    case 1: {
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      auto start = std::chrono::high_resolution_clock::now();
+      matchIndexes = deltaAlgos.deltaBM1(y, x, delta, gamma);
+      // Calculating total time taken by the program.
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      std::wcout << "Results with Delta Boyer Moore 1 (Trie): " << std::endl;
       break;
     }
     case 3: {
@@ -235,13 +245,9 @@ int main(int argc, char *argv[]) {
   }
   case 'o':
   case 'O': {
-    OccurrenceAlgos occurAlgos;
-
-    if (numCase)
-      occurAlgos = OccurrenceAlgos(numAlpBounds[0], numAlpBounds[1]);
-    else
-      occurAlgos = OccurrenceAlgos(alphPath);
-
+    OccurrenceAlgos occurAlgos =
+        numCase ? OccurrenceAlgos(numAlpBounds[0], numAlpBounds[1])
+                : OccurrenceAlgos(alphPath);
     switch (inputValue) {
     case 0: {
       std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "

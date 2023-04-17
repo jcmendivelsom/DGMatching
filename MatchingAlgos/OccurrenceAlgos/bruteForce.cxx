@@ -5,7 +5,7 @@
 pattern 'x' in a text input 'y' by checking every index in the text (brute
 force). If Gamma is negative just check the Delta match.
 */
-std::vector<int> OccurrenceAlgos::bruteForce(std::wstring t, std::wstring p,
+std::vector<int> OccurrenceAlgos::bruteForce(std::wstring_view t, std::wstring_view p,
                                                 int delta, int gamma) {
   int m = p.length();
   int n = t.length();

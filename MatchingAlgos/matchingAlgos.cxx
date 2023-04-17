@@ -4,7 +4,8 @@
     -> sumDeltaMatch return the sum of the value differences char. by char. But
    if find a Delta mismatch returns -1.
 */
-int MatchingAlgos::sumDeltaMatch(std::wstring x, std::wstring y, int delta) {
+int MatchingAlgos::sumDeltaMatch(std::wstring_view x, std::wstring_view y,
+                                 int delta) {
   int sum = 0;
   if (x.length() != y.length() || delta < 0)
     return -1;
@@ -20,23 +21,34 @@ int MatchingAlgos::sumDeltaMatch(std::wstring x, std::wstring y, int delta) {
     CONSTRUCTOR of the class MatchingAlgos just initialize the alphabet.
 */
 MatchingAlgos::MatchingAlgos(std::string alphPath) {
+  // Allow receive UTF-8 characters by console.
+  std::locale::global(std::locale(""));
+  std::cout.imbue(std::locale(""));
+  std::cin.imbue(std::locale(""));
   alph = alphPath.empty() ? Alphabet() : Alphabet(alphPath);
+  alph.print();
 }
 MatchingAlgos::MatchingAlgos(int begin, int end, int step) {
+  // Allow receive UTF-8 characters by console.
+  std::locale::global(std::locale(""));
+  std::cout.imbue(std::locale(""));
+  std::cin.imbue(std::locale(""));
   alph = Alphabet(begin, end, step);
-  // alph.print();
+  alph.print();
 }
 /*
      -> isDeltaGammaMatch return whether 'x' Delta match 'y' or not. If Gamma is
    negative just check the Delta match.
 */
-bool MatchingAlgos::isDeltaGammaMatch(std::wstring x, std::wstring y, int delta,
-                                      int gamma) {
+bool MatchingAlgos::isDeltaGammaMatch(std::wstring_view x, std::wstring_view y,
+                                      int delta, int gamma) {
   int aux = sumDeltaMatch(x, y, delta);
   return 0 <= aux && (aux <= gamma || gamma < 0);
 }
 
-std::wstring MatchingAlgos::getText(std::string filePath, bool isNumber) {
+///////////////////////////////////////////////////////////
+
+std::wstring getText(std::string filePath, bool isNumber) {
   /* If your native locale doesn't use UTF-8 encoding
    * you need to replace the empty string with a
    * locale like "en_US.utf8"
@@ -44,7 +56,8 @@ std::wstring MatchingAlgos::getText(std::string filePath, bool isNumber) {
   std::locale::global(std::locale(""));
   std::cout.imbue(std::locale());
   // Open the file (encoded with UTF-8) and read the values.
-  std::wifstream paramFileW(filePath);
+  std::wifstream paramFileW(filePath, std::ios::binary);
+  paramFileW.imbue(std::locale("en_US.UTF-8"));
   if (paramFileW.fail()) {
     throw std::invalid_argument("Can't open the specified file path: " +
                                 filePath);

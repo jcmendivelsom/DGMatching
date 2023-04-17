@@ -4,7 +4,7 @@
      -> minDeltaMatch compute the first index of 'p' from back to front that
    Delta matches 'a'.
 */
-int DeltaBMAlgos::backMinDeltaMatch(wchar_t a, std::wstring p, int delta) {
+int DeltaBMAlgos::backMinDeltaMatch(wchar_t a, std::wstring_view p, int delta) {
   int m = p.length();
   for (int i = m - 1; i >= 0; --i) {
     if (std::abs(alph.getValue(a) - alph.getValue(p[i])) <= delta)
@@ -17,7 +17,8 @@ int DeltaBMAlgos::backMinDeltaMatch(wchar_t a, std::wstring p, int delta) {
      -> deltaBadCharacter for every element in the alphabet compute the first
    index of 'p' from back to front that Delta matches.
 */
-std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring p, int delta) {
+std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring_view p,
+                                                 int delta) {
   // By default all char init with p.length()
   std::vector<int> dBC(alph.size(), p.length());
   std::vector<bool> visitedC(alph.size(), false);
@@ -60,8 +61,9 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring p, int delta) {
     -> deltaTunedBM computes all the Delta-Gamma matches of a pattern 'x' in a
    text 'y' by doing an adapted version of the Tuned Boyer Moore Algorithm.
 */
-std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring t, std::wstring p,
-                                            int delta, int gamma) {
+std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring_view t,
+                                            std::wstring_view p, int delta,
+                                            int gamma) {
   int m = p.length();
   int n = t.length();
   if (m <= 0 || m > n || delta < 0) {
@@ -77,19 +79,23 @@ std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring t, std::wstring p,
   int s = backMinDeltaMatch(p[m - 1], p.substr(0, m - 1), 2 * delta);
   s += 1;
   // Add to the end of the text p[m-1]^m.
-  t += std::wstring(m, p[m - 1]);
+  // t += std::wstring(m, p[m - 1]);
 
   // SEARCHING PHASE
   int k, j = m;
-  while (j <= n) {
-    k = dBCShift[alph.getIndex(t[j - 1])];
-    while (k != 0) {
-      j += k;
-      k = dBCShift[alph.getIndex(t[j - 1])];
+  try {
+    while (j <= n) {
+      k = dBCShift[alph.getIndex(t.at(j - 1))];
+      while (k != 0) {
+        j += k;
+        k = dBCShift[alph.getIndex(t.at(j - 1))];
+      }
+      if (isDeltaGammaMatch(p, t.substr(j - m, m), delta, gamma) && j <= n)
+        answ.push_back(j - m);
+      j += s;
     }
-    if (isDeltaGammaMatch(p, t.substr(j - m, m), delta, gamma) && j <= n)
-      answ.push_back(j - m);
-    j += s;
+  } catch (const std::out_of_range &e) {
+    std::cout << e.what() << '\n';
   }
   if (answ.empty())
     return {-1};

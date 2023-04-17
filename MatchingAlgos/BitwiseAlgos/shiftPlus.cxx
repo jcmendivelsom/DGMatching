@@ -8,12 +8,15 @@
    a Delta match and if the number formed by the last d bits we have a Gamma
    match.
 */
-std::vector<int> BitwiseAlgos::shiftPlus(std::wstring t, std::wstring p,
-                                         int delta, int gamma) {
+std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
+                                         std::wstring_view p, int delta,
+                                         int gamma) {
   int m = p.length();
   int n = t.length();
+  if (gamma < 0)
+    gamma = m * delta;
   int d = std::floor(std::log2(delta * m)) + 1;
-  if (m <= 0 || m * d > 64 || m > n || delta < 0 || gamma < 0) {
+  if (m <= 0 || m * d > 64 || m > n || delta < 0) {
     throw std::invalid_argument("Invalid parameters! ");
   }
 

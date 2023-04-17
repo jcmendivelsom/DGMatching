@@ -7,12 +7,15 @@
    bitstring (DState). If there is a zero in the m*l-1 position of
    DState we found a possible Delta-Gamma match.
 */
-std::vector<int> BitwiseAlgos::backwardScan(std::wstring t, std::wstring p,
-                                            int delta, int gamma) {
+std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
+                                            std::wstring_view p, int delta,
+                                            int gamma) {
   int m = p.length();
   int n = t.length();
+  if (gamma < 0)
+    gamma = m * delta;
   int l = 1 + std::ceil(std::log2(gamma + 1));
-  if (m <= 0 || m * l > 64 || m > n || delta < 0 || gamma < 0) {
+  if (m <= 0 || m * l > 64 || m > n || delta < 0) {
     throw std::invalid_argument("Invalid parameters! ");
   }
 

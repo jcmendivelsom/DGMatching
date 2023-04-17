@@ -4,7 +4,7 @@
     -> hash compute the hash of a string 'x', i.e. the sum of the value of their
    characters.
 */
-long DeltaBMAlgos::hash(std::wstring x) {
+long DeltaBMAlgos::hash(std::wstring_view x) {
   long sum = 0;
   for (int i = 0; i < x.length(); i++) {
     sum += alph.getValue(x[i]);
@@ -17,10 +17,10 @@ long DeltaBMAlgos::hash(std::wstring x) {
    positions for factors of 'x' of length k.
 */
 std::unordered_map<long int, std::vector<int>>
-DeltaBMAlgos::computeHashTableIx(std::wstring x, int k, int delta) {
+DeltaBMAlgos::computeHashTableIx(std::wstring_view x, int k, int delta) {
   std::unordered_map<long int, std::vector<int>> deltaHashTable;
   long begin, end;
-  std::wstring xFactorK;
+  std::wstring_view xFactorK;
   // Iterate over all factors of length k
   for (int pos = 0; pos <= x.length() - k; ++pos) {
     xFactorK = x.substr(pos, k);
@@ -45,7 +45,7 @@ DeltaBMAlgos::computeHashTableIx(std::wstring x, int k, int delta) {
    pattern 'x' in a text 'y' by checking if in the window a substring of length
    k have the same hash of any 'k-factor of 'x'.
 */
-std::vector<int> DeltaBMAlgos::deltaBM3(std::wstring t, std::wstring p,
+std::vector<int> DeltaBMAlgos::deltaBM3(std::wstring_view t, std::wstring_view p,
                                         int delta, int gamma, int k) {
   int m = p.length();
   int n = t.length();

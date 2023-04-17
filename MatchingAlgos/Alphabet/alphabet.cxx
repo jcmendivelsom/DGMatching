@@ -2,9 +2,18 @@
 
 Alphabet::Alphabet(int begin, int end, int step) {
   int index = 0, num;
+  if (begin < 0 || end < begin)
+    throw std::invalid_argument(
+        "Invalid alphabet, begin must be non-negative and end >= begin.");
+#if !USE_UNORDERED_MAP
+  alphToValues = std::vector<int>(end + 1, INT32_MIN);
+  alphToIndex = std::vector<int>(end + 1, -1);
+  indexToAlph = std::vector<long>((end - begin) / step, INT32_MIN);
+#endif
   for (num = begin; num <= end; num += step) {
     // Save in the map the values.
-    alphToValues[(long)num] = {num, index};
+    alphToValues[(long)num] = num;
+    alphToIndex[(long)num] = index;
     indexToAlph[index] = (long)num;
     valueToIndices[num].push_back(index);
     index++;
@@ -27,7 +36,7 @@ Alphabet::Alphabet(std::string filePath) {
                                 filePath);
   }
   std::wstring line;
-  long characterKey;
+  long characterKey, maxCHAR = 0;
   int value, index = 0;
   maxVALUE = INT32_MIN;
   minVALUE = INT32_MAX;
@@ -49,16 +58,50 @@ Alphabet::Alphabet(std::string filePath) {
       throw std::invalid_argument("Invalid alphabet file format. Can't "
                                   "convert to int certain wchar.");
     }
+#if USE_UNORDERED_MAP
     // Save in the map the values.
-    alphToValues[characterKey] = {value, index};
+    alphToValues[characterKey] = value;
+    alphToIndex[characterKey] = index;
     indexToAlph[index] = characterKey;
+#endif
     valueToIndices[value].push_back(index);
     if (value < minVALUE)
       minVALUE = value;
     if (maxVALUE < value)
       maxVALUE = value;
+    if (maxCHAR < characterKey)
+      maxCHAR = characterKey;
     ++index;
   }
+#if !USE_UNORDERED_MAP
+  // If we are using only vectors, we have to read one more time because the
+  // first one just get the max values to init vectors.
+  alphToValues = std::vector<int>(maxCHAR + 1, INT32_MIN);
+  alphToIndex = std::vector<int>(maxCHAR + 1, -1);
+  indexToAlph = std::vector<long>(index, INT32_MIN);
+
+  paramFileW.clear();
+  paramFileW.seekg(0, std::ios::beg);
+  index = 0;
+
+  while (paramFileW.good()) {
+    std::getline(paramFileW, line);
+    characterKey = (long)line[0]; // First char is always the alph. char
+    // The value of the character must be separated by one character and must
+    // be an integer.
+    value = std::stoi(line.substr(2));
+    try {
+      alphToValues.at(characterKey) = value;
+      alphToIndex.at(characterKey) = index;
+      indexToAlph.at(index) = characterKey;
+    } catch (const std::out_of_range &oor) {
+      std::wcout << characterKey << " ALPH OUT OF BOUNDS " << value
+                 << std::endl;
+    }
+    ++index;
+  }
+#endif
+
   paramFileW.close();
 }
 
@@ -66,18 +109,23 @@ Alphabet::Alphabet(std::string filePath) {
 // return INT32_MIN.
 int Alphabet::getValue(wchar_t c) {
   try {
-    return alphToValues.at((long)c).first;
+    if (alphToValues.at((long)c) == INT32_MIN)
+      throw std::invalid_argument("");
+    return alphToValues.at((long)c);
   } catch (const std::exception &e) {
     std::wcout << "The following character is not in the alphabet: " << c
-               << std::endl;
+               << " - " << (long)c << std::endl;
     throw std::invalid_argument("Invalid character! ");
   }
 }
 int Alphabet::getValueByI(int i) {
   try {
-    return alphToValues.at(indexToAlph.at(i)).first;
+    if (indexToAlph.at(i) == INT32_MIN ||
+        alphToValues.at(indexToAlph.at(i)) == INT32_MIN)
+      throw std::invalid_argument("");
+    return alphToValues.at(indexToAlph.at(i));
   } catch (const std::exception &e) {
-    std::wcout << "The following index is not in the alphabet: " << i
+    std::wcout << "The following index (*) is not in the alphabet: " << i
                << std::endl;
     throw std::invalid_argument("Invalid character! ");
   }
@@ -87,10 +135,12 @@ int Alphabet::getValueByI(int i) {
 // return -1.
 int Alphabet::getIndex(wchar_t c) {
   try {
-    return alphToValues.at((long)c).second;
+    if (alphToIndex.at((long)c) < 0)
+      throw std::invalid_argument("");
+    return alphToIndex.at((long)c);
   } catch (const std::exception &e) {
     std::wcout << "The following character is not in the alphabet: " << c
-               << std::endl;
+               << " - " << (long)c << std::endl;
     throw std::invalid_argument("Invalid character! ");
   }
 }
@@ -99,6 +149,8 @@ int Alphabet::getIndex(wchar_t c) {
 // return ''.
 wchar_t Alphabet::getWChar(int i) {
   try {
+    if (indexToAlph.at(i) == INT32_MIN)
+      throw std::invalid_argument("");
     return (wchar_t)indexToAlph.at(i);
   } catch (const std::exception &e) {
     std::wcout << "The following index is not in the alphabet: " << i
@@ -117,14 +169,21 @@ std::vector<int> Alphabet::getIndicesByVal(int val) {
 }
 
 // Size of the alphabet (number of characters.)
-int Alphabet::size() { return alphToValues.size(); }
+int Alphabet::size() { return indexToAlph.size(); }
 
 // Print the whole alphabet.
 void Alphabet::print() {
+#if USE_UNORDERED_MAP
   for (const auto &elem : alphToValues) {
-    std::wcout << (wchar_t)elem.first << " " << elem.second.first << " "
-               << elem.second.second << "\n";
+    std::wcout << getIndex((wchar_t)elem.first) << " " << (wchar_t)elem.first
+               << " " << elem.second << "\n";
   }
+#else
+  for (int i = 0; i < indexToAlph.size(); i++) {
+    std::wcout << i << " " << (wchar_t)indexToAlph[i] << " " << getValueByI(i)
+               << "\n";
+  }
+#endif
 }
 
 // Getters of the Min and Max value.

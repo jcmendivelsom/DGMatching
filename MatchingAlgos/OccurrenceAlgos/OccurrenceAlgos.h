@@ -8,8 +8,8 @@ class OccurrenceAlgos : public MatchingAlgos {
 
 public:
   using MatchingAlgos::MatchingAlgos;
-  std::vector<int> bruteForce(std::wstring y, std::wstring x, int delta,
+  std::vector<int> bruteForce(std::wstring_view y, std::wstring_view x, int delta,
                                  int gamma = -1);
-  std::vector<int> deltaSkipSearch(std::wstring t, std::wstring p, int delta,
+  std::vector<int> deltaSkipSearch(std::wstring_view t, std::wstring_view p, int delta,
                                    int gamma = -1);
 };

@@ -5,7 +5,7 @@
    longest suffix of 'p' that Delta matches a substring of p terminated in
    position i of 'p'.
 */
-std::vector<int> DeltaBMAlgos::deltaSuffix(std::wstring p, int delta) {
+std::vector<int> DeltaBMAlgos::deltaSuffix(std::wstring_view p, int delta) {
   int m = p.length(), j = 0;
   std::vector<int> dSuffix(m, m);
   for (int i = m - 2; i >= 0; --i) {
@@ -22,7 +22,7 @@ std::vector<int> DeltaBMAlgos::deltaSuffix(std::wstring p, int delta) {
     // Print Suffix Table
     std::wcout << "-------------------" << '\n';
     for (int i = 0; i < m; ++i)
-      std::wcout << p[i] << " Suff: " << dSuffix[i] << std::endl;
+      std::wcout << p[i] << " Suffix: " << dSuffix[i] << std::endl;
     std::wcout << "-------------------" << '\n';
   */
   return dSuffix;
@@ -33,7 +33,7 @@ std::vector<int> DeltaBMAlgos::deltaSuffix(std::wstring p, int delta) {
    that: p[j-k ... m-k-1] is a 2 * delta suffix of p[j ... m-1] and if k<=j-1
    then p[j-1]!=p[j-1-k], where m is the length of 'p'.
 */
-std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring p, int delta) {
+std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring_view p, int delta) {
   int m = p.length();
   std::vector<int> dGS(m, m), dSuffix = deltaSuffix(p, 2 * delta);
   for (int j = m - 1; j >= 0; --j) {
@@ -49,13 +49,13 @@ std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring p, int delta) {
       }
     }
   }
-
+  /*
   // Print Good Suffix Table
-  std::wcout << "-------------------" << '\n';
+  std::cout << "-------------------" << '\n';
   for (int i = 0; i < m; ++i)
-    std::wcout << p[i] << " dGS: " << dGS[i] << std::endl;
-  std::wcout << "-------------------" << '\n';
-
+    std::cout << p[i] << " dGS: " << dGS[i] << std::endl;
+  std::cout << "-------------------" << '\n';
+  */
   return dGS;
 }
 
@@ -64,8 +64,9 @@ std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring p, int delta) {
    't' by shifting using delta Bad Character Rule, then checking naively and
    moving by Good Suffix Rule.
 */
-std::vector<int> DeltaBMAlgos::deltaFastSearch(std::wstring t, std::wstring p,
-                                               int delta, int gamma) {
+std::vector<int> DeltaBMAlgos::deltaFastSearch(std::wstring_view t,
+                                               std::wstring_view p, int delta,
+                                               int gamma) {
   int m = p.length();
   int n = t.length();
   if (m <= 0 || m > n || delta < 0) {
@@ -80,26 +81,30 @@ std::vector<int> DeltaBMAlgos::deltaFastSearch(std::wstring t, std::wstring p,
   std::vector<int> dGSShift = deltaGoodSuffix(p, delta);
 
   // SEARCHING PHASE
-  t += std::wstring(m + 1, p[m - 1]);
+  // t += std::wstring(m + 1, p[m - 1]);
   int s = 0, sum, k, j;
-  while (s <= n - m) {
-    // Shift by Bad Character rule until the last char is matched.
-    while (dBCShift[alph.getIndex(t[s + m - 1])] > 0) {
-      s += dBCShift[alph.getIndex(t[s + m - 1])];
+  try {
+    while (s <= n - m) {
+      // Shift by Bad Character rule until the last char is matched.
+      while (dBCShift[alph.getIndex(t.at(s + m - 1))] > 0) {
+        s += dBCShift[alph.getIndex(t.at(s + m - 1))];
+      }
+      // Compare the characters until we found a mismatch.
+      sum = std::abs(alph.getValue(p[m - 1]) - alph.getValue(t.at(s + m - 1)));
+      j = m - 2;
+      while (j >= 0 && std::abs(alph.getValue(p[j]) -
+                                alph.getValue(t.at(s + j))) <= delta) {
+        sum += std::abs(alph.getValue(p[j]) - alph.getValue(t.at(s + j)));
+        j -= 1;
+      }
+      // If the length of the matched string is greater than the pattern we
+      // found a match.
+      if (j < 0 && (gamma < 0 || sum <= gamma))
+        answ.push_back(s);
+      s += dGSShift[j + 1];
     }
-    // Compare the characters until we found a mismatch.
-    sum = std::abs(alph.getValue(p[m - 1]) - alph.getValue(t[s + m - 1]));
-    j = m - 2;
-    while (j >= 0 &&
-           std::abs(alph.getValue(p[j]) - alph.getValue(t[s + j])) <= delta) {
-      sum += std::abs(alph.getValue(p[j]) - alph.getValue(t[s + j]));
-      j -= 1;
-    }
-    // If the length of the matched string is greater than the pattern we found
-    // a match.
-    if (j < 0 && (gamma < 0 || sum <= gamma))
-      answ.push_back(s);
-    s += dGSShift[j + 1];
+  } catch (const std::out_of_range &e) {
+    std::wcout << e.what() << '\n';
   }
   if (answ.empty())
     return {-1};

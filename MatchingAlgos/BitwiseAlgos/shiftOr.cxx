@@ -6,7 +6,7 @@
    the alphabet (ETable) and a status match bitstring (EState). If there is a
    zero in the m-1 position of EState we found a match!
 */
-std::vector<int> BitwiseAlgos::shiftOr(std::wstring t, std::wstring p) {
+std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p) {
   int m = p.length();
   if (m <= 0 || m > 64 || m > t.length()) {
     throw std::invalid_argument("Invalid parameters! ");

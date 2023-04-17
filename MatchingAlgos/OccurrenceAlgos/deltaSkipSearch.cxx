@@ -1,7 +1,7 @@
 #include "OccurrenceAlgos.h"
 
-std::vector<int> OccurrenceAlgos::deltaSkipSearch(std::wstring t,
-                                                  std::wstring p, int delta,
+std::vector<int> OccurrenceAlgos::deltaSkipSearch(std::wstring_view t,
+                                                  std::wstring_view p, int delta,
                                                   int gamma) {
   int m = p.length();
   int n = t.length();

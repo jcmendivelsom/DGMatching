@@ -7,7 +7,7 @@
    length of 'p'.
 */
 std::vector<std::vector<int>>
-DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring p, int delta,
+DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring_view p, int delta,
                                      std::vector<int> dBC) {
   if (dBC.size() != alph.size())
     dBC = deltaBadCharacter(p, delta);
@@ -32,32 +32,32 @@ DeltaBMAlgos::deltaForwardGoodSuffix(std::wstring p, int delta,
         }
       }
   }
-
-  // Print Forward Good Suffix Table
-  std::wcout << "-------------------" << '\n';
-  std::wcout << " * ";
-  for (int i = 0; i < alph.size(); ++i)
-    std::wcout << " " << alph.getWChar(i) << " ";
-  std::wcout << std::endl;
-  for (int i = 0; i < m; ++i) {
-    std::wcout << " " << p[i] << " ";
-    for (int j = 0; j < alph.size(); ++j)
-      std::wcout << " " << dFGS[i][j] << " ";
+  /*
+    // Print Forward Good Suffix Table
+    std::wcout << "-------------------" << '\n';
+    std::wcout << " * ";
+    for (int i = 0; i < alph.size(); ++i)
+      std::wcout << " " << alph.getWChar(i) << " ";
     std::wcout << std::endl;
-  }
-  std::wcout << "-------------------" << '\n';
-
+    for (int i = 0; i < m; ++i) {
+      std::wcout << " " << p[i] << " ";
+      for (int j = 0; j < alph.size(); ++j)
+        std::wcout << " " << dFGS[i][j] << " ";
+      std::wcout << std::endl;
+    }
+    std::wcout << "-------------------" << '\n';
+  */
   return dFGS;
 }
 
 /*
-    -> deltaForwardFastSearch returns the indices of all Delta-Gamma matches of 'p' in
-   't' by shifting using delta Bad Character Rule, then checking naively and
-   moving by Forward Good Suffix Rule.
+    -> deltaForwardFastSearch returns the indices of all Delta-Gamma matches of
+   'p' in 't' by shifting using delta Bad Character Rule, then checking naively
+   and moving by Forward Good Suffix Rule.
 */
-std::vector<int> DeltaBMAlgos::deltaForwardFastSearch(std::wstring t,
-                                                      std::wstring p, int delta,
-                                                      int gamma) {
+std::vector<int> DeltaBMAlgos::deltaForwardFastSearch(std::wstring_view t,
+                                                      std::wstring_view p,
+                                                      int delta, int gamma) {
   int m = p.length();
   int n = t.length();
   if (m <= 0 || m > n || delta < 0) {
@@ -73,26 +73,30 @@ std::vector<int> DeltaBMAlgos::deltaForwardFastSearch(std::wstring t,
       deltaForwardGoodSuffix(p, delta, dBCShift);
 
   // SEARCHING PHASE
-  t += std::wstring(m + 1, p[m - 1]);
+  // t += std::string(m + 1, p[m - 1]);
   int s = 0, sum, k, j;
-  while (s <= n - m) {
-    // Shift by Bad Character rule until the last char is matched.
-    while (dBCShift[alph.getIndex(t[s + m - 1])] > 0) {
-      s += dBCShift[alph.getIndex(t[s + m - 1])];
+  try {
+    while (s <= n - m) {
+      // Shift by Bad Character rule until the last char is matched.
+      while (dBCShift[alph.getIndex(t.at(s + m - 1))] > 0) {
+        s += dBCShift[alph.getIndex(t.at(s + m - 1))];
+      }
+      // Compare the characters until we found a mismatch.
+      sum = std::abs(alph.getValue(p[m - 1]) - alph.getValue(t.at(s + m - 1)));
+      j = m - 2;
+      while (j >= 0 && std::abs(alph.getValue(p[j]) -
+                                alph.getValue(t.at(s + j))) <= delta) {
+        sum += std::abs(alph.getValue(p[j]) - alph.getValue(t.at(s + j)));
+        j -= 1;
+      }
+      // If the length of the matched string is greater than the pattern we
+      // found a match.
+      if (j < 0 && (gamma < 0 || sum <= gamma))
+        answ.push_back(s);
+      s += dForwardGS[j + 1][alph.getIndex(t.at(s + m))];
     }
-    // Compare the characters until we found a mismatch.
-    sum = std::abs(alph.getValue(p[m - 1]) - alph.getValue(t[s + m - 1]));
-    j = m - 2;
-    while (j >= 0 &&
-           std::abs(alph.getValue(p[j]) - alph.getValue(t[s + j])) <= delta) {
-      sum += std::abs(alph.getValue(p[j]) - alph.getValue(t[s + j]));
-      j -= 1;
-    }
-    // If the length of the matched string is greater than the pattern we found
-    // a match.
-    if (j < 0 && (gamma < 0 || sum <= gamma))
-      answ.push_back(s);
-    s += dForwardGS[j + 1][alph.getIndex(t[s + m])];
+  } catch (const std::out_of_range &e) {
+    std::wcout << e.what() << '\n';
   }
   if (answ.empty())
     return {-1};

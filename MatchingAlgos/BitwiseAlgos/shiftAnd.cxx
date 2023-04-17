@@ -6,7 +6,7 @@
    the alphabet (DTable) and a status match bitstring (DState). If there is a
    one in the m-1 position of DState we found a Delta match!
 */
-std::vector<int> BitwiseAlgos::shiftAnd(std::wstring t, std::wstring p,
+std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t, std::wstring_view p,
                                         int delta) {
   int m = p.length();
   int n = t.length();
