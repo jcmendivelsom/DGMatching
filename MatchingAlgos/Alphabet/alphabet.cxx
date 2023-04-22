@@ -8,7 +8,7 @@ Alphabet::Alphabet(int begin, int end, int step) {
 #if !USE_UNORDERED_MAP
   alphToValues = std::vector<int>(end + 1, INT32_MIN);
   alphToIndex = std::vector<int>(end + 1, -1);
-  indexToAlph = std::vector<long>((end - begin) / step, INT32_MIN);
+  indexToAlph = std::vector<long>((end - begin) / step + 1, INT32_MIN);
 #endif
   for (num = begin; num <= end; num += step) {
     // Save in the map the values.

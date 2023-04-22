@@ -26,7 +26,7 @@ MatchingAlgos::MatchingAlgos(std::string alphPath) {
   std::cout.imbue(std::locale(""));
   std::cin.imbue(std::locale(""));
   alph = alphPath.empty() ? Alphabet() : Alphabet(alphPath);
-  alph.print();
+  // alph.print();
 }
 MatchingAlgos::MatchingAlgos(int begin, int end, int step) {
   // Allow receive UTF-8 characters by console.
@@ -34,7 +34,7 @@ MatchingAlgos::MatchingAlgos(int begin, int end, int step) {
   std::cout.imbue(std::locale(""));
   std::cin.imbue(std::locale(""));
   alph = Alphabet(begin, end, step);
-  alph.print();
+  // alph.print();
 }
 /*
      -> isDeltaGammaMatch return whether 'x' Delta match 'y' or not. If Gamma is

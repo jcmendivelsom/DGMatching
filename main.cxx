@@ -195,6 +195,20 @@ int main(int argc, char *argv[]) {
       std::wcout << "Results with Delta Boyer Moore 1 (Trie): " << std::endl;
       break;
     }
+    case 2: {
+      std::wcout << "Approximate Delta Matching. Insert Delta: "
+                 << std::endl;
+      std::wcin >> delta;
+      auto start = std::chrono::high_resolution_clock::now();
+      matchIndexes = deltaAlgos.deltaBM2(y, x, delta);
+      // Calculating total time taken by the program.
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      std::wcout << "Results with Delta Boyer Moore 2 (Suffix Automaton): " << std::endl;
+      break;
+    }
     case 3: {
       std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
                  << std::endl;

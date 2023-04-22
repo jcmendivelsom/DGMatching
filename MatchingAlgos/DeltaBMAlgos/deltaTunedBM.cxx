@@ -53,7 +53,7 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring_view p,
     for (int i = 0; i < dBC.size(); ++i)
       std::wcout << " || " << alph.getWChar(i) << " " << dBC[i];
     std::wcout << std::endl;
-    */
+  */
   return dBC;
 }
 
