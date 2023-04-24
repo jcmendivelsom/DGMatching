@@ -196,17 +196,18 @@ int main(int argc, char *argv[]) {
       break;
     }
     case 2: {
-      std::wcout << "Approximate Delta Matching. Insert Delta: "
+      std::wcout << "Approximate Delta Matching. Insert Delta and Gamma: "
                  << std::endl;
-      std::wcin >> delta;
+      std::wcin >> delta >> gamma;
       auto start = std::chrono::high_resolution_clock::now();
-      matchIndexes = deltaAlgos.deltaBM2(y, x, delta);
+      matchIndexes = deltaAlgos.deltaBM2(y, x, delta, gamma);
       // Calculating total time taken by the program.
       auto end = std::chrono::high_resolution_clock::now();
       time_taken =
           std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
               .count();
-      std::wcout << "Results with Delta Boyer Moore 2 (Suffix Automaton): " << std::endl;
+      std::wcout << "Results with Delta Boyer Moore 2 (Suffix Automaton): "
+                 << std::endl;
       break;
     }
     case 3: {

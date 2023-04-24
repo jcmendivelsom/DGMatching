@@ -1,10 +1,10 @@
 #pragma once
 #include "MatchingAlgos.h"
 #include <cmath>
+#include <map>
 #include <queue>
 #include <set>
 #include <unordered_map>
-#include <map>
 
 class DeltaBMAlgos : public MatchingAlgos {
 
@@ -41,7 +41,8 @@ public:
                                           int gamma = -1);
   std::vector<int> deltaBM1(std::wstring_view t, std::wstring_view p, int delta,
                             int gamma = -1, int k = -1);
-  std::vector<int> deltaBM2(std::wstring_view t, std::wstring_view p, int delta);
+  std::vector<int> deltaBM2(std::wstring_view t, std::wstring_view p, int delta,
+                            int gamma = -1);
   std::vector<int> deltaBM3(std::wstring_view t, std::wstring_view p, int delta,
                             int gamma = -1, int k = 2);
 };
@@ -76,44 +77,41 @@ public:
 };
 
 class DeltaBMAlgos::IntervalState {
-  public:
+public:
   int len;
   int link;
-  int first;
-  int index;
-  bool clone;
   bool terminal;
-  std::map<Interval, int> transitions;
+  std::map<Interval, int> intervalTransitions;
   std::unordered_map<int, int> travelTransitions;
-  std::vector<int> suffixReferences;
+  // std::vector<int> suffixReferences;
   Interval boundVals;
-
-  IntervalState();
   void addTransition(Interval in, int s);
   // Returns the index of a state or -1 if no transition exists for c
-  int getTransition(Interval in);
+  // int getTransition(Interval in);
   // Returns the index of a state or -1 if no transition exists for c
-  std::vector<int> travelWith(int c);
+  std::vector<int> intervalTravelWith(int c);
   int travel(int c);
   // Updates the transition through c to a new index i
-  void updateTransition(Interval in, int s);
+  // void updateTransition(Interval in, int s);
+  IntervalState();
 };
 
 class DeltaBMAlgos::DeltaSuffixAutomaton {
-  public:
-  bool suffixReferences = false;
   std::vector<IntervalState> states;
   int delta;
+  int size;
+  int last;
+
+public:
   // Returns the state at index i
   IntervalState getState(int i);
-  // Create a new state and return its index (requires t0 already initialized)
-  int addState(int len);
-  // Populate each state with a vector of its children in the link tree
-  void computeSuffixReferences();
 
   DeltaSuffixAutomaton(Alphabet alpha, std::wstring_view s, int delta);
+  void dSuffixAExtend(Interval in);
   // MAKE IT DETERMINISTIC FINITE AUTOMATON
   void makeDeterministic();
-  void fillTransitions();
+  void fillTravelTransitions();
   void printAutomaton();
+  int travelWith(int indexState, int val);
+  bool isTerminal(int indexState);
 };
