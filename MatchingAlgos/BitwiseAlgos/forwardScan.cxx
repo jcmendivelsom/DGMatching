@@ -39,19 +39,19 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
   }
   // Initialize auxHigBits as (1*0^(l-1))^m
   for (int i = 0; i < m; i++)
-    auxHighBits = (auxHighBits << l) | (1L << l - 1);
+    auxHighBits = (auxHighBits << l) | (1L << (l - 1));
 
   // SEARCHING PHASE
   DState = auxHighBits;
   for (int j = 0; j < n; ++j) {
     // Shift l bits to the left and set those l bits as 2^(l-1)-(Gamma+1)
-    DState = (DState << l) | ((1L << l - 1) - (gamma + 1));
+    DState = (DState << l) | ((1L << (l - 1)) - (gamma + 1));
     H = DState & auxHighBits;
     // Compute the change led by the entering character.
     DState = ((DState & ~H) + BTable[alph.getIndex(t[j])]) | H;
     // If there is a zero in the m*l-1 position of DState we found a Delta-Gamma
     // match.
-    if ((DState & (1L << m * l - 1)) == 0)
+    if ((DState & (1L << m * (l - 1))) == 0)
       answ.push_back(j - m + 1);
   }
   if (answ.empty())

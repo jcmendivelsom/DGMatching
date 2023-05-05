@@ -23,7 +23,7 @@ class DeltaBMAlgos : public MatchingAlgos {
   std::unordered_map<long int, std::vector<int>>
   computeHashTableIx(std::wstring_view x, int k, int delta);
   // DELTA BOYER MOORE 1
-  typedef std::pair<int, int> Interval;
+  using Interval = std::pair<int, int>;
   class IntervalNode;
   class DeltaFactorTrie;
   // DELTA BOYER MOORE 2
@@ -78,22 +78,23 @@ public:
 
 class DeltaBMAlgos::IntervalState {
 public:
+  std::map<Interval, int> intervalTransitions;
+  std::unordered_map<int, int> travelTransitions;
+  Interval boundVals;
   int len;
   int link;
   bool terminal;
-  std::map<Interval, int> intervalTransitions;
-  std::unordered_map<int, int> travelTransitions;
-  // std::vector<int> suffixReferences;
-  Interval boundVals;
+
+  IntervalState();
   void addTransition(Interval in, int s);
   // Returns the index of a state or -1 if no transition exists for c
   // int getTransition(Interval in);
   // Returns the index of a state or -1 if no transition exists for c
-  std::vector<int> intervalTravelWith(int c);
-  int travel(int c);
+  auto intervalTravelWith(int c) -> std::vector<int>;
   // Updates the transition through c to a new index i
   // void updateTransition(Interval in, int s);
-  IntervalState();
+  void setTravelTransitions();
+  void setBoundVals();
 };
 
 class DeltaBMAlgos::DeltaSuffixAutomaton {
@@ -102,16 +103,16 @@ class DeltaBMAlgos::DeltaSuffixAutomaton {
   int size;
   int last;
 
-public:
   // Returns the state at index i
-  IntervalState getState(int i);
-
-  DeltaSuffixAutomaton(Alphabet alpha, std::wstring_view s, int delta);
+  auto getState(int i) -> IntervalState;
   void dSuffixAExtend(Interval in);
   // MAKE IT DETERMINISTIC FINITE AUTOMATON
   void makeDeterministic();
   void fillTravelTransitions();
+
+public:
+  DeltaSuffixAutomaton(Alphabet alpha, std::wstring_view s, int delta);
   void printAutomaton();
-  int travelWith(int indexState, int val);
-  bool isTerminal(int indexState);
+  auto travelWith(int indexState, int val) -> int;
+  auto isTerminal(int indexState) -> bool;
 };

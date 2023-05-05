@@ -96,7 +96,7 @@ std::vector<int> DeltaBMAlgos::deltaForwardFastSearch(std::wstring_view t,
       s += dForwardGS[j + 1][alph.getIndex(t.at(s + m))];
     }
   } catch (const std::out_of_range &e) {
-    std::wcout << e.what() << '\n';
+    std::wcout << "";
   }
   if (answ.empty())
     return {-1};

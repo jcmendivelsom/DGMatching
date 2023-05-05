@@ -39,7 +39,7 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
   }
   // Initialize auxHigBits as (1*0^(l-1))^m
   for (int i = 0; i < m; i++)
-    auxHighBits = (auxHighBits << l) | (1L << l - 1);
+    auxHighBits = (auxHighBits << l) | (1L << (l - 1));
 
   // SEARCHING PHASE
   int pos = 0, j, last;
@@ -48,7 +48,7 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
     last = m;
     // Set DState as ([2^(l-1)-(Gamma+1)]_l)^m
     for (int i = 0; i < m; i++)
-      DState = (DState << l) | ((1L << l - 1) - (gamma + 1));
+      DState = (DState << l) | ((1L << (l - 1)) - (gamma + 1));
     while ((DState & auxHighBits) != auxHighBits) {
       // Compute the change led by the entering character.
       H = DState & auxHighBits;
@@ -56,7 +56,7 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
       j -= 1;
       // If there is a zero in the m*l-1 position of DState means that p[0 ..
       // m-j+1] matches t[pos+j ... pos+m]
-      if ((DState & (1L << m * l - 1)) == 0) {
+      if ((DState & (1L << (m * (l - 1)))) == 0) {
         // If there is a match j is negative. Otherwise we keep the last index
         // that matches
         if (j > 0)
@@ -64,7 +64,7 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
         else
           answ.push_back(pos);
       }
-      DState = (DState << l) | (1L << l - 1);
+      DState = (DState << l) | (1L << (l - 1));
     }
     pos += last;
   }

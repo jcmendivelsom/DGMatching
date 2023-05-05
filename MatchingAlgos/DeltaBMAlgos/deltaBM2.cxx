@@ -1,6 +1,4 @@
 #include "DeltaBMAlgos.h"
-#include <chrono>
-#include <iomanip>
 
 ////////////////// ALGORITHM ////////////////////////
 
@@ -12,20 +10,28 @@ std::vector<int> DeltaBMAlgos::deltaBM2(std::wstring_view t,
   if (m <= 0 || m > n || delta < 0) {
     throw std::invalid_argument("Invalid parameters! ");
   }
-  if (gamma < 0)
+  if (gamma < 0) {
     gamma = delta * m;
+  }
   // PREPROCESSING PHASE
   std::vector<int> answ;
   // Make reverse of pattern
-  std::wstring rev;
-  for (int i = m - 1; i >= 0; --i)
-    rev += p[i];
-  std::wstring_view pReverse(rev);
-  auto start = std::chrono::high_resolution_clock::now();
-  // Compute the Delta Factor Trie for all the k-factors.
-  DeltaSuffixAutomaton dsa = DeltaSuffixAutomaton(alph, pReverse, delta);
-  // Print the entire Delta Factor Trie
+  std::wstring rev(p);
+  wchar_t temp;
+  int k = m - 1;
+  for (int i = 0; i <= (m / 2); ++i) {
+    temp = p[i];
+    rev[i] = p[k];
+    rev[k] = temp;
+    k--;
+  }
+
+  // auto start = std::chrono::high_resolution_clock::now();
+  // Compute the Delta Suffix Automaton for all the k-factors.
+  DeltaSuffixAutomaton dsa = DeltaSuffixAutomaton(alph, rev, delta);
+  // Print the entire Delta Suffix Automaton
   // dsa.printAutomaton();
+  /*
   auto end = std::chrono::high_resolution_clock::now();
   double time_taken =
       std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
@@ -33,42 +39,39 @@ std::vector<int> DeltaBMAlgos::deltaBM2(std::wstring_view t,
   std::wcout << "Time building the automaton : " << std::fixed << time_taken
              << std::setprecision(9);
   std::wcout << " sec" << std::endl;
-
+  */
   // SEARCHING PHASE
-  start = std::chrono::high_resolution_clock::now();
-  int period = m, sum;
-  int j = 0, i, state, shift;
+  int period = m, sum = 0;
+  int j = 0, i = 0, state = 0, shift = 0;
   while (j <= n - m) {
     i = m - 1;
     state = 0;
     shift = m;
     sum = 0;
-    while (i + j >= 0 && dsa.travelWith(state, alph.getValue(t[i + j])) != -1) {
+
+    while (i + j >= 0 && i >= 0) {
       state = dsa.travelWith(state, alph.getValue(t[i + j]));
+      if (state == -1) {
+        break;
+      }
       sum += std::abs(alph.getValue(t[i + j]) - alph.getValue(p[i]));
-      if (dsa.isTerminal(state) && state != 0) {
+      if (dsa.isTerminal(state)) {
         period = shift;
         shift = i;
       }
       --i;
     }
     if (i < 0) {
-      if (sum <= gamma)
+      if (sum <= gamma) {
         answ.push_back(j);
+      }
       shift = period;
     }
     j += shift;
   }
-  end = std::chrono::high_resolution_clock::now();
-  time_taken =
-      std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  time_taken *= 1e-9;
-  std::wcout << "Time searching : " << std::fixed << time_taken
-             << std::setprecision(9);
-  std::wcout << " sec" << std::endl;
-
-  if (answ.empty())
+  if (answ.empty()) {
     return {-1};
+  }
   return answ;
 }
 
@@ -81,7 +84,8 @@ void DeltaBMAlgos::IntervalState::addTransition(Interval in, int s) {
   intervalTransitions[in] = s;
 }
 // Returns the index of a state or -1 if no transition exists for c
-std::vector<int> DeltaBMAlgos::IntervalState::intervalTravelWith(int c) {
+auto DeltaBMAlgos::IntervalState::intervalTravelWith(int c)
+    -> std::vector<int> {
   std::vector<int> states;
   for (auto const &t : intervalTransitions) {
     if (t.first.first <= c && c <= t.first.second) {
@@ -91,36 +95,22 @@ std::vector<int> DeltaBMAlgos::IntervalState::intervalTravelWith(int c) {
   return states;
 }
 
-// Returns the index of a state or -1 if no transition exists for c
-int DeltaBMAlgos::IntervalState::travel(int c) {
-  try {
-    return travelTransitions.at(c);
-  } catch (const std::exception &e) {
-    return -1;
-  }
-}
-
-DeltaBMAlgos::IntervalState::IntervalState() {
-  this->len = 0;
-  this->link = -1;
-  this->terminal = false;
-  //this->intervalTransitions = std::unordered_map<Interval, int>();
-  // std::unordered_map<Interval, int> transitions;
-  // std::vector<int> suffixReferences;
+DeltaBMAlgos::IntervalState::IntervalState()
+    : len(0), link(-1), terminal(false) {
   this->boundVals = Interval(INT32_MAX, INT32_MIN);
 }
 
 ////////////////// DELTA SUFFIX AUTOMATON /////////////////////
 
 // Returns the state at index i
-DeltaBMAlgos::IntervalState
-DeltaBMAlgos::DeltaSuffixAutomaton::getState(int i) {
-  return states.at(i);
+auto DeltaBMAlgos::DeltaSuffixAutomaton::getState(int i)
+    -> DeltaBMAlgos::IntervalState {
+  return states[i];
 }
 
 void DeltaBMAlgos::DeltaSuffixAutomaton::dSuffixAExtend(Interval in) {
   int cur = size++;
-  states.push_back(IntervalState());
+  states.emplace_back();
   states[cur].len = states[last].len + 1;
   int p = last;
   while (p != -1 && !states[p].intervalTransitions.count(in)) {
@@ -135,7 +125,7 @@ void DeltaBMAlgos::DeltaSuffixAutomaton::dSuffixAExtend(Interval in) {
       states[cur].link = q;
     } else {
       int clone = size++;
-      states.push_back(IntervalState());
+      states.emplace_back();
       states[clone].len = states[p].len + 1;
       states[clone].intervalTransitions = states[q].intervalTransitions;
       states[clone].boundVals = states[q].boundVals;
@@ -151,15 +141,13 @@ void DeltaBMAlgos::DeltaSuffixAutomaton::dSuffixAExtend(Interval in) {
 }
 DeltaBMAlgos::DeltaSuffixAutomaton::DeltaSuffixAutomaton(Alphabet alpha,
                                                          std::wstring_view s,
-                                                         int delta) {
+                                                         int delta)
+    : delta(delta), size(1), last(0) {
   // Initial state t0 will be initialized as last
-  this->delta = delta;
   IntervalState l;
   l.len = 0;
   l.link = -1;
   states.push_back(l);
-  this->last = 0;
-  this->size = 1;
 
   Interval in;
   for (auto const &c : s) {
@@ -171,7 +159,7 @@ DeltaBMAlgos::DeltaSuffixAutomaton::DeltaSuffixAutomaton(Alphabet alpha,
   // it is obviously a terminal state. By climbing the suffix links, we
   // find the state that corresponds to the next largest suffix that
   // is of a different equivalence class. This will be a terminal state
-  // as well. So on and so forth until we hit the root of the link tree.
+  // as well.
   states[last].terminal = true;
   int link = states[last].link;
   while (link != -1) {
@@ -187,42 +175,46 @@ DeltaBMAlgos::DeltaSuffixAutomaton::DeltaSuffixAutomaton(Alphabet alpha,
 void DeltaBMAlgos::DeltaSuffixAutomaton::makeDeterministic() {
   std::map<std::set<int>, int> dfaStateMap;
   std::queue<std::set<int>> dfaStateQueue;
-  for (int i = 0; i < states.size(); ++i)
+  for (int i = 0; i < states.size(); ++i) {
     dfaStateMap[{i}] = i;
+  }
   dfaStateQueue.push({0});
+  std::set<int> currentNfaStates, nextNfaStates;
+  int indexCurrState;
+  IntervalState current;
+  bool isTerminal;
   while (!dfaStateQueue.empty()) {
-    std::set<int> currentNfaStates = dfaStateQueue.front();
-    int indexCurrState = dfaStateMap[currentNfaStates];
+    currentNfaStates = dfaStateQueue.front();
+    indexCurrState = dfaStateMap[currentNfaStates];
     dfaStateQueue.pop();
-    IntervalState current = states[indexCurrState];
-    // std::cout << "Entro" << indexCurrState << "\n";
-    bool isTerminal = false;
-    // Procesar cada posible entrada del alfabeto
+    current = states[indexCurrState];
+    // std::cout << "Enter" << indexCurrState << "\n";
+    isTerminal = false;
+    // Process every possible alphabet entry.
     for (int input = current.boundVals.first; input <= current.boundVals.second;
          ++input) {
-      // std::cout << "Estoy en for" << (char) input << "\n";
-      std::set<int> nextNfaStates;
-      // Encontrar todos los estados NFA accesibles por esta entrada
+      nextNfaStates = std::set<int>();
+      // Find all NFA statuses accessible by this entry.
       for (int nfaState : currentNfaStates) {
         for (int state : states[nfaState].intervalTravelWith(input)) {
           nextNfaStates.insert(state);
-          if (states[state].terminal)
+          if (states[state].terminal) {
             isTerminal = true;
+          }
         }
       }
-      // Si el conjunto de estados NFA es vacío, no hay transición para esta
-      // entrada
+      // If the set of NFA states is empty, there is no transition for this
+      // input.
       if (nextNfaStates.empty()) {
-        // std::cout << "Entro a continue \n";
+        // std::cout << "Enter to continue \n";
         continue;
       }
-      // Verificar si ya existe un estado DFA correspondiente a este conjunto
-      // de estados NFA
+      // Check if a DFA state already exists corresponding to this set of NFA
+      // states.
       auto sts = dfaStateMap.find(nextNfaStates);
       if (sts == dfaStateMap.end()) {
-        // Si no existe, crear un nuevo estado DFA
-        int newDfaState = states.size();
-        dfaStateMap[nextNfaStates] = newDfaState;
+        // If it does not exist, create a new DFA state.
+        dfaStateMap[nextNfaStates] = static_cast<int>(states.size());
         IntervalState aux;
         aux.len = 0;
         aux.link = -1;
@@ -234,8 +226,7 @@ void DeltaBMAlgos::DeltaSuffixAutomaton::makeDeterministic() {
               std::max(aux.boundVals.second, states[i].boundVals.second);
         }
         states.push_back(aux);
-        // states[newDfaState].nfaStates = nextNfaStates;
-        // std::cout << " nuevo estado \n";
+        // std::cout << " New state! \n";
         dfaStateQueue.push(nextNfaStates);
         sts = dfaStateMap.find(nextNfaStates);
       }
@@ -266,7 +257,7 @@ void DeltaBMAlgos::DeltaSuffixAutomaton::fillTravelTransitions() {
 
 void DeltaBMAlgos::DeltaSuffixAutomaton::printAutomaton() {
   std::wstring aux, aux2;
-  for (int index = 0; index < states.size(); ++index)
+  for (int index = 0; index < states.size(); ++index) {
     for (auto const &tr : getState(index).travelTransitions) {
       aux = getState(index).terminal ? L"%" : L" ";
       aux2 = states[tr.second].terminal ? L"%" : L" ";
@@ -275,23 +266,18 @@ void DeltaBMAlgos::DeltaSuffixAutomaton::printAutomaton() {
                  << "-> "
                  << "( " << tr.second << " )" << aux2 << std::endl;
     }
-  /*
-for (auto const &st : states)
-  for (auto const &tr : st.transitions) {
-    aux = st.terminal ? L"%" : L" ";
-    aux2 = states[tr.second].terminal ? L"%" : L" ";
-    std::wcout << "( " << st.index << " )" << aux << "-> "
-               << "[ " << tr.first.first << "," << tr.first.second << " ] "
-               << "-> "
-               << "( " << tr.second << " )" << aux2 << std::endl;
   }
-  */
 }
-int DeltaBMAlgos::DeltaSuffixAutomaton::travelWith(int indexState, int val) {
-  return states[indexState].travel(val);
+auto DeltaBMAlgos::DeltaSuffixAutomaton::travelWith(int indexState, int val)
+    -> int {
+  if (auto search = states[indexState].travelTransitions.find(val);
+      search != states[indexState].travelTransitions.end())
+    return search->second;
+  else
+    return -1;
 }
 
-bool DeltaBMAlgos::DeltaSuffixAutomaton::isTerminal(int indexState) {
+auto DeltaBMAlgos::DeltaSuffixAutomaton::isTerminal(int indexState) -> bool {
   return states[indexState].terminal;
 }
 // O(s) query to see if our source text contains a substring s

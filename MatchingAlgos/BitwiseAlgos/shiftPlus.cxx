@@ -53,8 +53,8 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
     GState = (GState >> d) + GTable[alph.getIndex(t[i])];
     // One in the m-1 position means we found a Delta match.
     // The las d bits are less or equal to Gamma means we have a Gamma match.
-    if ((~DState & (1L << m - 1)) == 0 &&
-        (GState & ~(~1L << d - 1)) <= (long)gamma)
+    if ((~DState & (1L << (m - 1))) == 0 &&
+        (GState & ~(~1L << (d - 1))) <= (long)gamma)
       answ.push_back(i - m + 1);
   }
   if (answ.empty())

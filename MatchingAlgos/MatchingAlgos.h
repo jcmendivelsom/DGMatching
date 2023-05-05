@@ -20,3 +20,4 @@ public:
 };
 // UTIL FUNCTIONS
 std::wstring getText(std::string filePath, bool isNumber = false);
+std::vector<int> getMIDINumbers(std::string filePath);

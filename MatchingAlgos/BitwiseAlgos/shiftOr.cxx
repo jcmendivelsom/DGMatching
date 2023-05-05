@@ -16,7 +16,7 @@ std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p)
   std::vector<int> answ;
   long ETable[alph.size()]; // Table for every element in the alphabet
   // Bitstring in which we are going to carry the match records
-  long EState = ~0;
+  unsigned long EState = ~0;
 
   for (int i = 0; i < alph.size(); ++i)
     ETable[i] = ~0;
@@ -30,7 +30,7 @@ std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p)
     // Compute the change led by the entering character.
     EState = (EState << 1) | ETable[alph.getIndex(t[i])];
     // Zero in the m-1 position means we found a match.
-    if ((EState & (1L << m - 1)) == 0)
+    if ((EState & (1L << (m - 1))) == 0)
       answ.push_back(i - m + 1);
   }
   if (answ.empty())

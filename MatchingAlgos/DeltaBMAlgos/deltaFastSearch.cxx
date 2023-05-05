@@ -104,7 +104,7 @@ std::vector<int> DeltaBMAlgos::deltaFastSearch(std::wstring_view t,
       s += dGSShift[j + 1];
     }
   } catch (const std::out_of_range &e) {
-    std::wcout << e.what() << '\n';
+    std::wcout << "";
   }
   if (answ.empty())
     return {-1};

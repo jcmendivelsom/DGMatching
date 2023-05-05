@@ -34,7 +34,7 @@ std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t, std::wstring_view p
     // Compute the change led by the entering character.
     DState = ((DState << 1) | 1L) & DTable[alph.getIndex(t[i])];
     // One in the m-1 position means we found a Delta match.
-    if ((~DState & (1L << m - 1)) == 0)
+    if ((~DState & (1L << (m - 1))) == 0)
       answ.push_back(i - m + 1);
   }
   if (answ.empty())
