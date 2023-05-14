@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <string_view>
+#include <algorithm>
 
 class MatchingAlgos {
 protected:

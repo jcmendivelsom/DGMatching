@@ -1,4 +1,5 @@
 #include "BitwiseAlgos.h"
+#include <string>
 
 /*
     -> shiftOr computes all the exact matches of a pattern 'x' in a text 'y' by
@@ -8,21 +9,21 @@
 */
 std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p) {
   int m = p.length();
-  if (m <= 0 || m > 64 || m > t.length()) {
-    throw std::invalid_argument("Invalid parameters! ");
+  if (m <= 0 || m > MAX_BITS || m > t.length()) {
+    throw std::invalid_argument("Invalid parameters! -" + std::to_string(m));
   }
 
   // PREPROCESSING PHASE
   std::vector<int> answ;
-  long ETable[alph.size()]; // Table for every element in the alphabet
+  BitSet ETable[alph.size()]; // Table for every element in the alphabet
   // Bitstring in which we are going to carry the match records
-  unsigned long EState = ~0;
+  BitSet EState = ~BitSet(0);
 
   for (int i = 0; i < alph.size(); ++i)
-    ETable[i] = ~0;
+    ETable[i] = ~BitSet(0);
   for (int i = 0; i < m; ++i) {
     // Put a zero in the i^th position if there is a match.
-    ETable[alph.getIndex(p[i])] &= ~(1L << i);
+    ETable[alph.getIndex(p[i])] &= ~(BitSet(1) << i);
   }
 
   // SEARCHING PHASE
@@ -30,7 +31,7 @@ std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p)
     // Compute the change led by the entering character.
     EState = (EState << 1) | ETable[alph.getIndex(t[i])];
     // Zero in the m-1 position means we found a match.
-    if ((EState & (1L << (m - 1))) == 0)
+    if ((EState & (BitSet(1) << (m - 1))) == 0)
       answ.push_back(i - m + 1);
   }
   if (answ.empty())

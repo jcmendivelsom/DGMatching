@@ -6,35 +6,36 @@
    the alphabet (DTable) and a status match bitstring (DState). If there is a
    one in the m-1 position of DState we found a Delta match!
 */
-std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t, std::wstring_view p,
-                                        int delta) {
+std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t,
+                                        std::wstring_view p, int delta) {
   int m = p.length();
   int n = t.length();
-  if (m <= 0 || m > 64 || m > n || delta < 0) {
-    throw std::invalid_argument("Invalid parameters! ");
+  if (m <= 0 || m > MAX_BITS || m > n || delta < 0) {
+    throw std::invalid_argument("Invalid parameters! -" + std::to_string(m));
   }
   // alph.print();
   // PREPROCESSING PHASE
   std::vector<int> answ;
-  long DTable[alph.size()]; // Table for every element in the alphabet.
+  BitSet DTable[alph.size()]; // Table for every element in the alphabet.
   // Bitstring in which we are going to carry the match records.
-  long DState = 0;
+  BitSet DState(0);
 
   for (int i = 0; i < alph.size(); ++i) {
-    DTable[i] = 0;
+    DTable[i] = BitSet(0);
     for (int j = 0; j < m; ++j) {
       // Put a one in the j^th position if there is a Delta match with p[i].
       DTable[i] |=
-          (std::abs(alph.getValueByI(i) - alph.getValue(p[j])) <= delta) << j;
+          BitSet(std::abs(alph.getValueByI(i) - alph.getValue(p[j])) <= delta)
+          << j;
     }
   }
 
   // SEARCHING PHASE
   for (int i = 0; i < n; ++i) {
     // Compute the change led by the entering character.
-    DState = ((DState << 1) | 1L) & DTable[alph.getIndex(t[i])];
+    DState = ((DState << 1) | BitSet(1)) & DTable[alph.getIndex(t[i])];
     // One in the m-1 position means we found a Delta match.
-    if ((~DState & (1L << (m - 1))) == 0)
+    if ((~DState & (BitSet(1) << (m - 1))) == 0)
       answ.push_back(i - m + 1);
   }
   if (answ.empty())
