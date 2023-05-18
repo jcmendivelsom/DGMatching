@@ -257,6 +257,20 @@ int main(int argc, char *argv[]) {
       std::wcout << "Results with Delta Forward Fast Search: " << std::endl;
       break;
     }
+    case 6: {
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      auto start = std::chrono::high_resolution_clock::now();
+      matchIndexes = deltaAlgos.trieSearch(y, x, delta, gamma);
+      // Calculating total time taken by the program.
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      std::wcout << "Results with Delta Trie Search Search: " << std::endl;
+      break;
+    }
     default:
       std::wcout << "Bad init parameter! :(" << std::endl;
       return 1;
@@ -295,6 +309,20 @@ int main(int argc, char *argv[]) {
           std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
               .count();
       std::wcout << "Results with Delta Skip Search: " << std::endl;
+      break;
+    }
+    case 2: {
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      auto start = std::chrono::high_resolution_clock::now();
+      matchIndexes = occurAlgos.intervalSearch(y, x, delta, gamma);
+      // Calculating total time taken by the program.
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      std::wcout << "Results with Interval Search: " << std::endl;
       break;
     }
     default:

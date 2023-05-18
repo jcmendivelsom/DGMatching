@@ -1,5 +1,68 @@
 #include "DeltaBMAlgos.h"
 
+// true if the suffix of word starting from word[pos] is a prefix
+// of word
+bool DeltaBMAlgos::is_prefix(std::wstring_view p, ssize_t pos, int delta) {
+  int suffixLen = p.length() - pos;
+  for (int i = 0; i < suffixLen; i++) {
+    // std::wcout << i << " " << pos + i << std::endl;
+    if (std::abs(alph.getValue(p[i]) - alph.getValue(p[pos + i])) > delta) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// length of the longest suffix of word ending on word[pos].
+// suffix_length("dddbcabc", 8, 4) = 2
+size_t DeltaBMAlgos::suffix_length(std::wstring_view p, ssize_t pos, int delta) {
+  size_t i, pLen = p.length();
+  // increment suffix length i to the first mismatch or beginning
+  // of the word
+  for (i = 0; (i <= pos) && (std::abs(alph.getValue(p[pos - i]) -
+                                      alph.getValue(p[pLen - 1 - i])) <= delta);
+       i++)
+    ;
+  return i;
+}
+
+std::vector<int> DeltaBMAlgos::make_delta2(std::wstring_view pat, int delta) {
+  ssize_t p;
+  size_t last_prefix_index = 1, patLen = pat.length();
+  std::vector<int> delta2(patLen);
+  // first loop
+  for (p = patLen - 1; p >= 0; p--) {
+    // std::wcout << " p=" << p << std::endl;
+    if (is_prefix(pat, p + 1, 2 * delta)) {
+      std::wcout << p <<" Prefeijo" << '\n';
+      last_prefix_index = p + 1;
+    }
+    delta2[p] = (patLen - 1 - p) + last_prefix_index;
+  }
+  // std::wcout << " OK FIRST " << std::endl;
+  std::wcout << "-------V2----------" << '\n';
+  for (int i = 0; i < patLen; ++i)
+    std::wcout << pat[i] << " dGS: " << delta2[i] << std::endl;
+  std::wcout << "-------------------" << '\n';
+  // second loop
+  size_t slen;
+  for (p = 0; p < patLen - 1; p++) {
+    // std::wcout << "p=" << p << std::endl;
+    slen = suffix_length(pat, p, 2 * delta);
+    if (pat[p - slen] != pat[patLen - 1 - slen]) {
+      delta2[patLen - 1 - slen] = patLen - 1 - p + slen;
+    }
+  }
+  // std::wcout << " OK SECOND " << std::endl;
+  // Print Good Suffix Table
+  std::wcout << "-------V2----------" << '\n';
+  for (int i = 0; i < patLen; ++i)
+    std::wcout << pat[i] << " dGS: " << delta2[i] << std::endl;
+  std::wcout << "-------------------" << '\n';
+
+  return delta2;
+}
+
 /*
     deltaSuffix returns a int vector containing in position i the length of the
    longest suffix of 'p' that Delta matches a substring of p terminated in
@@ -51,11 +114,12 @@ std::vector<int> DeltaBMAlgos::deltaGoodSuffix(std::wstring_view p, int delta) {
   }
   /*
   // Print Good Suffix Table
-  std::cout << "-------------------" << '\n';
+  std::wcout << "--------V1---------" << '\n';
   for (int i = 0; i < m; ++i)
-    std::cout << p[i] << " dGS: " << dGS[i] << std::endl;
-  std::cout << "-------------------" << '\n';
+    std::wcout << p[i] << " dGS: " << dGS[i] << std::endl;
+  std::wcout << "-------------------" << '\n';
   */
+
   return dGS;
 }
 
@@ -79,7 +143,7 @@ std::vector<int> DeltaBMAlgos::deltaFastSearch(std::wstring_view t,
   std::vector<int> dBCShift = deltaBadCharacter(p, delta);
   // Delta Good Suffix - Table Shift for every char in the pattern.
   std::vector<int> dGSShift = deltaGoodSuffix(p, delta);
-
+  // std::vector<int> ver2DGS = make_delta2(p, delta);
   // SEARCHING PHASE
   // t += std::wstring(m + 1, p[m - 1]);
   int s = 0, sum, k, j;

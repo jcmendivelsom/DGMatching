@@ -83,5 +83,10 @@
   "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/OccurrenceAlgos",
   "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/OccurrenceAlgos.dir/deltaSkipSearch.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/deltaSkipSearch.cxx",
   "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/deltaSkipSearch.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/OccurrenceAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/OccurrenceAlgos.dir/intervalSearch.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/intervalSearch.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/intervalSearch.cxx"
 }
 ]

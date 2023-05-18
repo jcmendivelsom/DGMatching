@@ -1,6 +1,7 @@
 #include "DeltaBMAlgos.h"
+#include <pstl/glue_algorithm_defs.h>
 
-/////////////////// ALGORITHM ///////////////////
+/////////////////// ALGORITHMS ///////////////////
 
 std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
                                         std::wstring_view p, int delta,
@@ -16,7 +17,7 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
   // Compute the Delta Factor Trie for all the k-factors.
   DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, k);
   // Print the entire Delta Factor Trie
-  // trie->printTrie();
+  trie->printTrie();
 
   // SEARCHING PHASE
   int i = m;
@@ -29,7 +30,7 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
     }
     possiblePos = trie->travelWith(t.substr(i - k, k))->positions;
     for (int j = 0; j < possiblePos.size(); ++j) {
-      if (i - k - possiblePos[j] + m > t.length())
+      if (i - k - possiblePos[j] < 0 || i - k - possiblePos[j] + m > t.length())
         continue;
       if (isDeltaGammaMatch(p, t.substr(i - k - possiblePos[j], m), delta,
                             gamma)) {
@@ -37,6 +38,62 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
       }
     }
     i += m - k + 1;
+  }
+  if (answ.empty())
+    return {-1};
+  return answ;
+}
+
+std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
+                                          std::wstring_view p, int delta,
+                                          int gamma) {
+  int m = p.length();
+  int n = t.length();
+  if (m <= 0 || m > n || delta < 0) {
+    throw std::invalid_argument("Invalid parameters! ");
+  }
+
+  // PREPROCESSING PHASE
+  std::vector<int> answ;
+  // Compute the Delta Factor Trie for all the k-factors.
+  DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, m);
+  // Print the entire Delta Factor Trie
+  // trie->printTrie();
+
+  // SEARCHING PHASE
+
+  int i = m - 1, l = 0, last = -1, auxLast = 0;
+  IntervalNode *traveler;
+  std::unordered_map<int, int> possiblePos;
+  // std::vector<int> possiblePos;
+  while (i < n) {
+    traveler = trie->root;
+    l = 0;
+    possiblePos = {};
+    while (i + l < n &&
+           traveler->getTransition(alph.getValue(t[i + l])) != NULL) {
+      traveler = traveler->getTransition(alph.getValue(t[i + l]));
+      l += 1;
+      for (int j = 0; j < traveler->positions.size(); ++j) {
+        possiblePos[l - traveler->positions[j]] = l;
+      }
+    }
+    // possiblePos = traveler->positions;
+    for (const auto &myPair : possiblePos) {
+      // std::wcout << i << " " << i + l << "-" << myPair.first << " // \n";
+      if (i + myPair.first - 1 <= last ||
+          i + myPair.first - 1 + m >= n)
+        continue;
+      // std::wcout << i + myPair.first - 1 << " : " << t.substr(i +
+      // myPair.first - 1, m) << " \n ";
+      if (isDeltaGammaMatch(p, t.substr(i + myPair.first - 1, m), delta,
+                            gamma)) {
+        answ.push_back(i + myPair.first - 1);
+      }
+      auxLast = i + myPair.first - 1;
+    }
+    last = auxLast;
+    i += m - l + 1;
   }
   if (answ.empty())
     return {-1};
@@ -74,10 +131,43 @@ DeltaBMAlgos::IntervalNode::buildTransition(int c, int delta) {
 
 DeltaBMAlgos::IntervalNode *DeltaBMAlgos::IntervalNode::getTransition(int c) {
   for (int i = 0; i < childrens.size(); ++i) {
-    if (childrens[i]->i.first <= c && c <= childrens[i]->i.second)
+    if (childrens[i] != NULL && childrens[i]->i.first <= c &&
+        c <= childrens[i]->i.second)
       return childrens[i];
   }
   return NULL;
+}
+
+void DeltaBMAlgos::IntervalNode::checkIntervals() {
+  if (childrens.empty())
+    return;
+  std::vector<IntervalNode *> goodChilds;
+  IntervalNode *aux;
+  Interval auxInt;
+  // std::vector<IntervalNode *>::iterator mit = childrens.begin();
+  for (int i = 0; i < childrens.size(); ++i) {
+    for (int j = i + 1; j < childrens.size(); ++j) {
+      if (childrens[i] != NULL && childrens[j] != NULL &&
+          !(childrens[i]->i.second < childrens[j]->i.first ||
+            childrens[i]->i.first > childrens[j]->i.second)) {
+        aux = new IntervalNode(
+            childrens[j]->alphMinVal, childrens[j]->alphMaxVal,
+            std::min(childrens[i]->i.first, childrens[j]->i.first),
+            std::max(childrens[i]->i.second, childrens[j]->i.second));
+        aux->childrens = childrens[i]->childrens;
+        for (auto p : childrens[j]->childrens) {
+          aux->childrens.push_back(p);
+        }
+        aux->positions = childrens[i]->positions;
+        for (auto p : childrens[j]->positions) {
+          aux->positions.push_back(p);
+        }
+        childrens.push_back(aux);
+        childrens[j] = NULL;
+        childrens[i] = NULL;
+      }
+    }
+  }
 }
 
 void DeltaBMAlgos::IntervalNode::printNode() {
@@ -97,6 +187,15 @@ void DeltaBMAlgos::DeltaFactorTrie::insertFactor(std::wstring_view factor,
   for (int i = 0; i < factor.length(); ++i)
     traveler = traveler->buildTransition(innerAlph.getValue(factor[i]), delta);
   traveler->positions.push_back(pos);
+}
+
+void DeltaBMAlgos::DeltaFactorTrie::insertSuffix(std::wstring_view factor,
+                                                 int pos) {
+  IntervalNode *traveler = root;
+  for (int i = 0; i < factor.length(); ++i) {
+    traveler = traveler->buildTransition(innerAlph.getValue(factor[i]), delta);
+    traveler->positions.push_back(pos + i);
+  }
 }
 
 void DeltaBMAlgos::DeltaFactorTrie::print(IntervalNode *inputNode) {
@@ -120,15 +219,31 @@ DeltaBMAlgos::DeltaFactorTrie::DeltaFactorTrie(Alphabet &innerAlph,
   this->root = new IntervalNode(
       this->innerAlph.getMinValue(), this->innerAlph.getMaxValue(),
       this->innerAlph.getMinValue(), this->innerAlph.getMaxValue());
-  for (int i = 0; i <= text.length() - this->k; ++i) {
-    insertFactor(text.substr(i, this->k), i);
+  if (k < text.length()) {
+    for (int i = 0; i <= text.length() - this->k; ++i) {
+      insertFactor(text.substr(i, this->k), i);
+    }
+  } else {
+    for (int i = 0; i < text.length(); ++i) {
+      insertSuffix(text.substr(i), i);
+    }
   }
+  // fixIntervals(this->root);
 }
 
 void DeltaBMAlgos::DeltaFactorTrie::printTrie() {
   std::wcout << "---------------------------" << std::endl;
   print(root);
   std::wcout << "---------------------------" << std::endl;
+}
+
+void DeltaBMAlgos::DeltaFactorTrie::fixIntervals(IntervalNode *inputNode) {
+  if (inputNode == NULL)
+    return;
+  for (auto node : inputNode->childrens) {
+    fixIntervals(node);
+  }
+  inputNode->checkIntervals();
 }
 
 DeltaBMAlgos::IntervalNode *
@@ -194,8 +309,9 @@ childrenIntervals[i].second) return childrens[i];
     void printNode()
     {
         for (auto intvl : childrenIntervals)
-            std::cout << "[" << intvl.first - (int)' ' << ", " << intvl.second -
-(int)' ' << "] "; std::cout << "{ "; for (auto pos : positions) std::cout << pos
+            std::cout << "[" << intvl.first - (int)' ' << ", " << intvl.second
+- (int)' ' << "] "; std::cout << "{ "; for (auto pos : positions) std::cout <<
+pos
 << ", "; std::cout << " }\n";
     }
 };
@@ -255,7 +371,8 @@ public:
     }
 };
 
-std::string deltaBM1SkipSearch(std::string t, std::string p, unsigned int delta)
+std::string deltaBM1SkipSearch(std::string t, std::string p, unsigned int
+delta)
 {
     int m = p.length();
     int n = t.length();

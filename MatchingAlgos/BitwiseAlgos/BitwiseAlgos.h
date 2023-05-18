@@ -5,7 +5,10 @@
 #include <iostream>
 #include <vector>
 
+/* /////////////////// */
 #define USE_MORE_MACHINE_WORD 1 // Change this to 1 and MAX_BITS use your desired word length.
+/* /////////////////// */
+
 #define WORD_LEN 64
 
 #if USE_MORE_MACHINE_WORD
