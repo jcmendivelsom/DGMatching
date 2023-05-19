@@ -17,7 +17,7 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
   // Compute the Delta Factor Trie for all the k-factors.
   DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, k);
   // Print the entire Delta Factor Trie
-  trie->printTrie();
+  // trie->printTrie();
 
   // SEARCHING PHASE
   int i = m;

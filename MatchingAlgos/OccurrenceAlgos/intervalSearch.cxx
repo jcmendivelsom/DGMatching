@@ -33,6 +33,8 @@ std::vector<int> OccurrenceAlgos::intervalSearch(std::wstring_view t,
     }
     i += m;
   }
+  if (answ.empty())
+    return {-1};
   return answ;
 };
 

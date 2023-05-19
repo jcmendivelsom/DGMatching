@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
                << std::endl;
     std::wcin >> numAlpBounds[0] >> numAlpBounds[1];
     yIn = getText(std::string(pathText.begin(), pathText.end()), true);
+    std::wcout<< yIn.size() << std::endl;
     break;
   case 3:
     std::wcout << "Enter MUSIC path:"
