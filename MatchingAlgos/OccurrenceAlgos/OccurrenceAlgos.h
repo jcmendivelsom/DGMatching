@@ -5,6 +5,8 @@
 #include <vector>
 
 class OccurrenceAlgos : public MatchingAlgos {
+  struct permutation;
+
   using Interval = std::pair<int, int>;
   struct IntervalNode;
   class IntervalTree;

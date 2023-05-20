@@ -53,11 +53,10 @@ int main(int argc, char *argv[]) {
                << std::endl;
     std::wcin >> numAlpBounds[0] >> numAlpBounds[1];
     yIn = getText(std::string(pathText.begin(), pathText.end()), true);
-    std::wcout<< yIn.size() << std::endl;
+    std::wcout << yIn.size() << std::endl;
     break;
   case 3:
-    std::wcout << "Enter MUSIC path:"
-               << std::endl;
+    std::wcout << "Enter MUSIC path:" << std::endl;
     std::wcin >> pathText;
     getMIDINumbers(std::string(pathText.begin(), pathText.end()));
     return 0;
@@ -269,7 +268,21 @@ int main(int argc, char *argv[]) {
       time_taken =
           std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
               .count();
-      std::wcout << "Results with Delta Trie Search Search: " << std::endl;
+      std::wcout << "Results with Delta Trie Search: " << std::endl;
+      break;
+    }
+    case 7: {
+      std::wcout << "Approximate Delta-Gamma Matching. Insert Delta and Gamma: "
+                 << std::endl;
+      std::wcin >> delta >> gamma;
+      auto start = std::chrono::high_resolution_clock::now();
+      matchIndexes = deltaAlgos.deltaMaximalShift(y, x, delta, gamma);
+      // Calculating total time taken by the program.
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      std::wcout << "Results with Delta Maximal Shift: " << std::endl;
       break;
     }
     default:

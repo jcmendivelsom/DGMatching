@@ -61,6 +61,11 @@
 },
 {
   "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
+  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaMaximalShift.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaMaximalShift.cxx",
+  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaMaximalShift.cxx"
+},
+{
+  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/DeltaBMAlgos",
   "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/DeltaBMAlgos.dir/deltaFastSearch.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaFastSearch.cxx",
   "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos/deltaFastSearch.cxx"
 },
@@ -73,11 +78,6 @@
   "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/OccurrenceAlgos",
   "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/OccurrenceAlgos.dir/bruteForce.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/bruteForce.cxx",
   "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/bruteForce.cxx"
-},
-{
-  "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/OccurrenceAlgos",
-  "command": "/usr/bin/g++-10   -I/home/luvakor/unal/dgMatching/MatchingAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/Alphabet -I/home/luvakor/unal/dgMatching/MatchingAlgos/BitwiseAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/DeltaBMAlgos -I/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos  -g   -std=gnu++17 -o CMakeFiles/OccurrenceAlgos.dir/deltaMaximalShift.cxx.o -c /home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/deltaMaximalShift.cxx",
-  "file": "/home/luvakor/unal/dgMatching/MatchingAlgos/OccurrenceAlgos/deltaMaximalShift.cxx"
 },
 {
   "directory": "/home/luvakor/unal/dgMatching/build/MatchingAlgos/OccurrenceAlgos",

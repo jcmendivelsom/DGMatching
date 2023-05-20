@@ -11,6 +11,10 @@ class DeltaBMAlgos : public MatchingAlgos {
   // DELTA TUNED BOYER MOORE
   int backMinDeltaMatch(wchar_t a, std::wstring_view p, int delta);
   std::vector<int> deltaBadCharacter(std::wstring_view p, int delta);
+  // MAXIMAL SHIFT
+  std::vector<int> deltaMax(std::wstring_view p, int delta,
+                            std::vector<int> &perm);
+  std::vector<int> maxShiftPerm(std::wstring_view p, int delta);
   // DELTA FAST SEARCH
   bool is_prefix(std::wstring_view p, ssize_t pos, int delta);
   size_t suffix_length(std::wstring_view p, ssize_t pos, int delta);
@@ -39,6 +43,8 @@ public:
                                 int delta, int gamma = -1);
   std::vector<int> deltaFastSearch(std::wstring_view t, std::wstring_view p,
                                    int delta, int gamma = -1);
+  std::vector<int> deltaMaximalShift(std::wstring_view t, std::wstring_view p,
+                                     int delta, int gamma = -1);
   std::vector<int> deltaForwardFastSearch(std::wstring_view t,
                                           std::wstring_view p, int delta,
                                           int gamma = -1);
@@ -63,17 +69,15 @@ public:
   IntervalNode(int minVal, int maxVal, int a, int b);
   IntervalNode *buildTransition(int c, int delta);
   IntervalNode *getTransition(int c);
-  void checkIntervals();
   void printNode();
 };
 
 class DeltaBMAlgos::DeltaFactorTrie {
   Alphabet innerAlph;
   int delta;
-  void insertFactor(std::wstring_view factor, int pos);
-  void insertSuffix(std::wstring_view factor, int pos);
+  void insertKFactor(std::wstring_view text);
+  void insertSuffixes(std::wstring_view text);
   void print(IntervalNode *inputNode);
-  void fixIntervals(IntervalNode *inputNode);
 
 public:
   IntervalNode *root;

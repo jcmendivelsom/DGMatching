@@ -21,6 +21,7 @@ std::vector<int> OccurrenceAlgos::intervalSearch(std::wstring_view t,
     iTree.insert(aux, i);
   }
   // iTree.print();
+
   int i = m - 1;
   while (i < n) {
     for (auto pos : iTree.getIntersections(alph.getValue(t[i]))) {
@@ -64,6 +65,11 @@ void OccurrenceAlgos::IntervalTree::rightRotate(IntervalNode *x) {
   }
   y->rightChild = x;
   x->parent = y;
+  // Update Max Values
+  x->max =
+      std::max(std::max(x->leftChild->max, x->rightChild->max), x->i.second);
+  y->max =
+      std::max(std::max(y->leftChild->max, y->rightChild->max), y->i.second);
 };
 
 void OccurrenceAlgos::IntervalTree::leftRotate(IntervalNode *x) {
@@ -82,6 +88,11 @@ void OccurrenceAlgos::IntervalTree::leftRotate(IntervalNode *x) {
   }
   y->leftChild = x;
   x->parent = y;
+  // Update Max Values
+  x->max =
+      std::max(std::max(x->leftChild->max, x->rightChild->max), x->i.second);
+  y->max =
+      std::max(std::max(y->leftChild->max, y->rightChild->max), y->i.second);
 };
 
 void OccurrenceAlgos::IntervalTree::fixInsert(IntervalNode *k) {
@@ -158,6 +169,10 @@ void OccurrenceAlgos::IntervalTree::insert(Interval i, int pos) {
   IntervalNode *x = this->root;
 
   while (x != tNILL) {
+    if (node->i.first == x->i.first && node->i.second == x->i.second) {
+      x->positions.push_back(pos);
+      return;
+    }
     y = x;
     if (node->i.first < x->i.first) {
       x = x->leftChild;
@@ -174,8 +189,6 @@ void OccurrenceAlgos::IntervalTree::insert(Interval i, int pos) {
     root = node;
   } else if (node->i.first < y->i.first) {
     y->leftChild = node;
-  } else if (node->i.first == y->i.first && node->i.second == y->i.second) {
-    y->positions.push_back(pos);
   } else {
     y->rightChild = node;
   }
@@ -201,7 +214,7 @@ void OccurrenceAlgos::IntervalTree::insert(Interval i, int pos) {
 void OccurrenceAlgos::IntervalTree::printAux(IntervalNode *x) {
   if (x == tNILL)
     return;
-  std::wcout << "[" << x->i.first << "," << x->i.second << "]"
+  std::wcout << x->color << " [" << x->i.first << "," << x->i.second << "]"
              << " - " << x->max << " : ";
   for (auto pos : x->positions)
     std::wcout << pos << " ";
