@@ -18,6 +18,7 @@ std::vector<int> DeltaBMAlgos::deltaMaximalShift(std::wstring_view t,
   std::vector<int> perm = maxShiftPerm(p, delta);
   std::vector<int> dMax = deltaMax(p, delta, perm);
   std::vector<int> dBC = deltaBadCharacter(p, delta);
+
   // SEARCHING PHASE
   int j = 0, i, sum;
   while (j <= n - m) {
@@ -31,9 +32,13 @@ std::vector<int> DeltaBMAlgos::deltaMaximalShift(std::wstring_view t,
           std::abs(alph.getValue(p[perm[i]]) - alph.getValue(t[j + perm[i]]));
       i += 1;
     }
-    if (i == m && sum <= gamma)
+    // std::wcout << i << " $ " << j << " - " << j + (m - 1) << " # " <<
+    // std::endl;
+    if (i >= m && sum <= gamma)
       answ.push_back(j);
-    j += std::max(dMax[perm[i]], dBC[t[j + m - 1]]);
+    // std::wcout << " **  " << std::max(dMax[perm[i]], dBC[t[j + m - 1]]) <<
+    // std::endl;
+    j += std::max(dMax[perm[i]], dBC[alph.getIndex(t[j + m - 1])]);
   }
 
   if (answ.empty())
@@ -47,7 +52,7 @@ std::vector<int> DeltaBMAlgos::deltaMax(std::wstring_view p, int delta,
   // Calculate period of p
   int period;
   for (period = 1; period < m; ++period) {
-    if (isDeltaGammaMatch(p.substr(0, m - period), p.substr(period), delta))
+    if (isDeltaGammaMatch(p.substr(0, m - period), p.substr(period), 2 * delta))
       break;
   }
   // D MAX
@@ -59,7 +64,7 @@ std::vector<int> DeltaBMAlgos::deltaMax(std::wstring_view p, int delta,
                                        alph.getValue(p[perm[i]])) <= delta)
         continue;
       flag = true;
-      for (int j = 1; j < i; ++j) {
+      for (int j = 0; j < i; ++j) {
         if (perm[j] - l >= 0 &&
             std::abs(alph.getValue(p[perm[j] - l]) -
                      alph.getValue(p[perm[j]])) > 2 * delta) {
@@ -75,12 +80,12 @@ std::vector<int> DeltaBMAlgos::deltaMax(std::wstring_view p, int delta,
   }
   // Add dMax for m
   dMax.push_back(period);
-  /*
+
   std::wcout << " DMAX" << std::endl;
   for (const auto &pos : dMax)
     std::wcout << pos << ", ";
   std::wcout << "\n";
-  */
+
   return dMax;
 }
 std::vector<int> DeltaBMAlgos::maxShiftPerm(std::wstring_view p, int delta) {
@@ -106,10 +111,10 @@ std::vector<int> DeltaBMAlgos::maxShiftPerm(std::wstring_view p, int delta) {
   });
   // Permutation of m is m!
   per.push_back(m);
-  /*
+  std::wcout << "Permutation \n";
   for (const auto &pos : per)
     std::wcout << pos << ", ";
   std::wcout << "\n";
-  */
+
   return per;
 }

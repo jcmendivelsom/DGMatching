@@ -26,7 +26,7 @@ std::vector<int> OccurrenceAlgos::intervalSearch(std::wstring_view t,
   while (i < n) {
     for (auto pos : iTree.getIntersections(alph.getValue(t[i]))) {
       // std::wcout << i - pos << " * " << t.substr(i - pos, m) << "\n";
-      if (i - pos < 0 || i - pos + m >= n)
+      if (i - pos < 0 || i - pos + m - 1 > n)
         continue;
       if (isDeltaGammaMatch(p, t.substr(i - pos, m), delta, gamma)) {
         answ.push_back(i - pos);

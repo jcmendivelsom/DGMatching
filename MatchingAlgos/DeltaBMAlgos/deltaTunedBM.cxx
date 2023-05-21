@@ -1,4 +1,5 @@
 #include "DeltaBMAlgos.h"
+#include <iostream>
 
 /*
      -> minDeltaMatch compute the first index of 'p' from back to front that
@@ -8,7 +9,7 @@ int DeltaBMAlgos::backMinDeltaMatch(wchar_t a, std::wstring_view p, int delta) {
   int m = p.length();
   for (int i = m - 1; i >= 0; --i) {
     if (std::abs(alph.getValue(a) - alph.getValue(p[i])) <= delta)
-      return m - (i + 1);
+      return m - 1 - i;
   }
   return m;
 }
@@ -21,6 +22,7 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring_view p,
                                                  int delta) {
   // By default all char init with p.length()
   std::vector<int> dBC(alph.size(), p.length());
+  /*
   std::vector<bool> visitedC(alph.size(), false);
   for (int i = p.length() - 1; i >= 0; --i) {
     for (int d = 0; d <= delta; ++d) {
@@ -47,12 +49,17 @@ std::vector<int> DeltaBMAlgos::deltaBadCharacter(std::wstring_view p,
         }
       }
     }
+
   }
+  */
+  for (int i = 0; i < dBC.size(); ++i) {
+    dBC[i] = backMinDeltaMatch(alph.getWChar(i), p, delta);
+  }
+  // Print the Delta Bad Character Table
   /*
-    // Print the Delta Bad Character Table
-    for (int i = 0; i < dBC.size(); ++i)
-      std::wcout << " || " << alph.getWChar(i) << " " << dBC[i];
-    std::wcout << std::endl;
+  for (int i = 0; i < dBC.size(); ++i)
+    std::wcout << i << " || " << alph.getWChar(i) << " " << dBC[i] << std::endl;
+  std::wcout << std::endl;
   */
   return dBC;
 }
@@ -80,22 +87,23 @@ std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring_view t,
   s += 1;
   // Add to the end of the text p[m-1]^m.
   // t += std::wstring(m, p[m - 1]);
-
   // SEARCHING PHASE
-  int k, j = m;
+  int k, j = m - 1;
   try {
-    while (j <= n) {
-      k = dBCShift[alph.getIndex(t.at(j - 1))];
-      while (k != 0) {
+    while (j < n) {
+      k = dBCShift[alph.getIndex(t.at(j))];
+      while (j < n && k != 0) {
         j += k;
-        k = dBCShift[alph.getIndex(t.at(j - 1))];
+        k = dBCShift[alph.getIndex(t.at(j))];
       }
-      if (isDeltaGammaMatch(p, t.substr(j - m, m), delta, gamma) && j <= n)
-        answ.push_back(j - m);
+      // std::wcout << j - (m - 1) << " - " << j << " # "  << std::endl;
+      if (j < n && isDeltaGammaMatch(p, t.substr(j - (m - 1), m), delta, gamma)) {
+        answ.push_back(j - (m - 1));
+      }
       j += s;
     }
   } catch (const std::out_of_range &e) {
-    std::wcout << "";
+    std::wcout << "nk \n";
   }
   if (answ.empty())
     return {-1};
