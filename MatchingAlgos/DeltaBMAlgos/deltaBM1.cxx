@@ -1,6 +1,5 @@
 #include "DeltaBMAlgos.h"
 
-
 /////////////////// ALGORITHMS ///////////////////
 
 std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
@@ -17,11 +16,11 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
   // Compute the Delta Factor Trie for all the k-factors.
   DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, k);
   // Print the entire Delta Factor Trie
-  // trie->printTrie();
+  trie->printTrie();
 
   // SEARCHING PHASE
-  int i = m, l;
-  k = trie->k;
+  // k = trie->k;
+  int i = m - 1, l;
   std::vector<int> possiblePos;
   IntervalNode *traveler;
   while (i < n) {
@@ -33,23 +32,28 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
     possiblePos = trie->travelWith(t.substr(i - k, k))->positions;
     */
     traveler = trie->root;
-    l = 1;
+    l = 0;
     while (l <= k &&
-           traveler->getTransition(alph.getValue(t[i - k + l])) != NULL) {
-      traveler = traveler->getTransition(alph.getValue(t[i - k + l]));
+           traveler->getTransition(alph.getValue(t[i - k + l + 1])) != NULL) {
+      // std::wcout << "->" << i - k + l + 1<< "\n";
+      traveler = traveler->getTransition(alph.getValue(t[i - k + l + 1]));
       ++l;
+    }
+    // std::wcout << "%" << l << "\n";
+    if (l < k) {
+      i += m - k + 1;
+      continue;
     }
     possiblePos = traveler->positions;
     for (const auto &j : possiblePos) {
-      // std::wcout << i << " - " << j << " : " << t.substr(i - k, k) << " * "
-      // << t.substr(i - k - j + 1, m) << std::endl;
-      if (i - l - j + 1 < 0 || i - l - j + m >= n)
+      // std::wcout << i << " - " << j << " : " << i - j << " * " << i - j + m - 1 << std::endl;
+      if (i - j < 0 || i - j + m - 1 >= n)
         continue;
-      if (isDeltaGammaMatch(p, t.substr(i - l - j + 1, m), delta, gamma)) {
-        answ.push_back(i - l - j + 1);
+      if (isDeltaGammaMatch(p, t.substr(i - j, m), delta, gamma)) {
+        answ.push_back(i - j);
       }
     }
-    i += m - l + 1;
+    i += m - k + 1;
   }
   if (answ.empty())
     return {-1};

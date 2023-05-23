@@ -3,24 +3,31 @@
 unsigned long long BitwiseAlgos::crop(BitSet x) {
 #if USE_MORE_MACHINE_WORD
   return (x & ~(~BitSet(0) << WORD_LEN)).to_ullong();
+  // return x.get();
 #else
   return x;
 #endif
 };
 
-BitSet BitwiseAlgos::sum(BitSet a, BitSet b) {
-  unsigned long long aSub=0, bSub=0;
+BitwiseAlgos::BitSet BitwiseAlgos::sum(BitSet a, BitSet b) {
+  unsigned long long aSub = 0, bSub = 0;
   // bool carry = false;
   BitSet answ(0);
+#if USE_MORE_MACHINE_WORD
   for (short int i = 0; WORD_LEN * i < MAX_BITS; ++i) {
     aSub = aSub < bSub;
-    aSub += crop(a >> (WORD_LEN * i));
-    bSub = crop(b >> (WORD_LEN * i));
+    // aSub += crop(a >> (WORD_LEN * i));
+    aSub += crop(a);
+    // bSub = crop(b >> (WORD_LEN * i));
+    bSub = crop(b);
     // std::cout<< aSub << " " << bSub << std::endl;
     aSub += bSub;
     // aSub += carry;
     answ |= BitSet(aSub) << (WORD_LEN * i);
+    a >>= WORD_LEN;
+    b >>= WORD_LEN;
   }
+#endif
   return answ;
 }
 
@@ -79,12 +86,13 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
 // Add in the first bits the char difference.
 #if USE_MORE_MACHINE_WORD
     GState = sum((GState >> d), GTable[alph.getIndex(t[i])]);
+    // GState = (GState >> d) + GTable[alph.getIndex(t[i])];
 #else
     GState = (GState >> d) + GTable[alph.getIndex(t[i])];
 #endif
     // One in the m-1 position means we found a Delta match.
     // The las d bits are less or equal to Gamma means we have a Gamma match.
-    if ((~DState & (BitSet(1) << (m - 1))) == 0 &&
+    if ((~DState & (BitSet(1) << (m - 1))) == BitSet(0) &&
         crop(GState & ~(~BitSet(1) << (d - 1))) <= (long)gamma)
       answ.push_back(i - m + 1);
   }

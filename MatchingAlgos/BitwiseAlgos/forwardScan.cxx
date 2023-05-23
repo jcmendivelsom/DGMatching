@@ -54,12 +54,13 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
 // Compute the change led by the entering character.
 #if USE_MORE_MACHINE_WORD
     DState = sum((DState & ~H), BTable[alph.getIndex(t[j])]) | H;
+    // DState = ((DState & ~H) + BTable[alph.getIndex(t[j])]) | H;
 #else
     DState = ((DState & ~H) + BTable[alph.getIndex(t[j])]) | H;
 #endif
     // If there is a zero in the m*l-1 position of DState we found a Delta-Gamma
     // match.
-    if ((DState & (BitSet(1) << (m * l - 1))) == 0)
+    if ((DState & (BitSet(1) << (m * l - 1))) == BitSet(0))
       answ.push_back(j - m + 1);
   }
   if (answ.empty())

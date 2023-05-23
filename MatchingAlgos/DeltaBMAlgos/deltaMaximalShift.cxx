@@ -38,7 +38,7 @@ std::vector<int> DeltaBMAlgos::deltaMaximalShift(std::wstring_view t,
       answ.push_back(j);
     // std::wcout << " **  " << std::max(dMax[perm[i]], dBC[t[j + m - 1]]) <<
     // std::endl;
-    j += std::max(dMax[perm[i]], dBC[alph.getIndex(t[j + m - 1])]);
+    j += j + m < n ? std::max(dMax[perm[i]], dBC[alph.getIndex(t[j + m])]) : m;
   }
 
   if (answ.empty())
@@ -56,10 +56,9 @@ std::vector<int> DeltaBMAlgos::deltaMax(std::wstring_view p, int delta,
       break;
   }
   // D MAX
-  int l;
   bool flag;
   for (int i = 0; i < m; ++i) {
-    for (l = 1; l < m; ++l) {
+    for (int l = 1; l < m; ++l) {
       if (perm[i] - l >= 0 && std::abs(alph.getValue(p[perm[i] - l]) -
                                        alph.getValue(p[perm[i]])) <= delta)
         continue;
@@ -107,7 +106,7 @@ std::vector<int> DeltaBMAlgos::maxShiftPerm(std::wstring_view p, int delta) {
   // to avoid unnecessary index re-orderings
   // when v contains elements of equal values
   std::stable_sort(per.begin(), per.end(), [&minShift](int i1, int i2) {
-    return minShift[i1] > minShift[i2];
+    return minShift[i1] >= minShift[i2];
   });
   // Permutation of m is m!
   per.push_back(m);

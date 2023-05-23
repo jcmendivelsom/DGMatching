@@ -17,18 +17,23 @@ long DeltaBMAlgos::hash(std::wstring_view x) {
    positions for factors of 'x' of length k.
 */
 std::unordered_map<long int, std::vector<int>>
-DeltaBMAlgos::computeHashTableIx(std::wstring_view x, int k, int delta) {
+DeltaBMAlgos::computeHashTableIx(std::wstring_view x, int k, int delta,
+                                 int gamma) {
   std::unordered_map<long int, std::vector<int>> deltaHashTable;
   long begin, end;
   std::wstring_view xFactorK;
+  long rHash;
+  if (gamma < 0)
+    gamma = delta * (k + 1);
   // Iterate over all factors of length k
   for (int pos = 0; pos <= x.length() - k; ++pos) {
     xFactorK = x.substr(pos, k);
+    rHash = hash(xFactorK);
     // Limit the possible factors by the max and min values of the hash.
-    begin = hash(xFactorK) - k * delta;
-    if (begin < k * alph.getMinValue())
-      begin = k * alph.getMinValue();
-    end = hash(xFactorK) + k * delta;
+    begin = rHash - std::min(k * delta, gamma);
+    if (begin < alph.getMinValue())
+      begin = alph.getMinValue();
+    end = rHash + std::min(k * delta, gamma);
     if (end > k * alph.getMaxValue())
       end = k * alph.getMaxValue();
     for (long i = begin; i <= end; ++i) {
@@ -45,8 +50,9 @@ DeltaBMAlgos::computeHashTableIx(std::wstring_view x, int k, int delta) {
    pattern 'x' in a text 'y' by checking if in the window a substring of length
    k have the same hash of any 'k-factor of 'x'.
 */
-std::vector<int> DeltaBMAlgos::deltaBM3(std::wstring_view t, std::wstring_view p,
-                                        int delta, int gamma, int k) {
+std::vector<int> DeltaBMAlgos::deltaBM3(std::wstring_view t,
+                                        std::wstring_view p, int delta,
+                                        int gamma, int k) {
   int m = p.length();
   int n = t.length();
   if (m <= 0 || m > n || k > m || delta < 0) {
@@ -57,7 +63,7 @@ std::vector<int> DeltaBMAlgos::deltaBM3(std::wstring_view t, std::wstring_view p
   std::vector<int> answ;
   // Compute the hash table for all the k-factors.
   std::unordered_map<long int, std::vector<int>> deltaHashTable =
-      computeHashTableIx(p, k, delta);
+      computeHashTableIx(p, k, delta, gamma);
   /*
   // Print the Delta Hash Table
     for (auto elem : deltaHashTable) {

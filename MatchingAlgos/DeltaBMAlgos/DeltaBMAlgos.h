@@ -28,7 +28,7 @@ class DeltaBMAlgos : public MatchingAlgos {
   // DELTA BOYER MOORE 3
   long hash(std::wstring_view x);
   std::unordered_map<long int, std::vector<int>>
-  computeHashTableIx(std::wstring_view x, int k, int delta);
+  computeHashTableIx(std::wstring_view x, int k, int delta, int gamma);
   // DELTA BOYER MOORE 1
   using Interval = std::pair<int, int>;
   class IntervalNode;

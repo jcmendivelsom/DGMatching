@@ -58,13 +58,14 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
       H = DState & auxHighBits;
 #if USE_MORE_MACHINE_WORD
       DState = sum((DState & ~H), BTable[alph.getIndex(t[pos + j - 1])]) | H;
+      // DState = ((DState & ~H) + BTable[alph.getIndex(t[pos + j - 1])]) | H;
 #else
       DState = ((DState & ~H) + BTable[alph.getIndex(t[pos + j - 1])]) | H;
 #endif
       j -= 1;
       // If there is a zero in the m*l-1 position of DState means that p[0 ..
       // m-j+1] matches t[pos+j ... pos+m]
-      if ((DState & (BitSet(1) << (m * l - 1))) == 0) {
+      if ((DState & (BitSet(1) << (m * l - 1))) == BitSet(0)) {
         // If there is a match j is negative. Otherwise we keep the last index
         // that matches
         if (j > 0)
