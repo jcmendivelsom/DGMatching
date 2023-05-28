@@ -16,12 +16,12 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
   // Compute the Delta Factor Trie for all the k-factors.
   DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, k);
   // Print the entire Delta Factor Trie
-  trie->printTrie();
+  // trie->printTrie();
 
   // SEARCHING PHASE
-  // k = trie->k;
+  k = trie->k;
   int i = m - 1, l;
-  std::vector<int> possiblePos;
+  // std::set<int> possiblePos;
   IntervalNode *traveler;
   while (i < n) {
     /*
@@ -35,18 +35,20 @@ std::vector<int> DeltaBMAlgos::deltaBM1(std::wstring_view t,
     l = 0;
     while (l <= k &&
            traveler->getTransition(alph.getValue(t[i - k + l + 1])) != NULL) {
-      // std::wcout << "->" << i - k + l + 1<< "\n";
+      // std::wcout << "->" << i - k + l + 1 << " + " << alph.getValue(t[i - k +
+      // l + 1])<<"\n";
       traveler = traveler->getTransition(alph.getValue(t[i - k + l + 1]));
-      ++l;
+      l++;
     }
     // std::wcout << "%" << l << "\n";
     if (l < k) {
       i += m - k + 1;
       continue;
     }
-    possiblePos = traveler->positions;
-    for (const auto &j : possiblePos) {
-      // std::wcout << i << " - " << j << " : " << i - j << " * " << i - j + m - 1 << std::endl;
+    // possiblePos = traveler->positions;
+    for (const auto &j : traveler->positions) {
+      // std::wcout << i << " - " << j << " : " << i - j << " * " << i - j + m -
+      // 1 << std::endl;
       if (i - j < 0 || i - j + m - 1 >= n)
         continue;
       if (isDeltaGammaMatch(p, t.substr(i - j, m), delta, gamma)) {
@@ -80,7 +82,7 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
 
   int i = m - 1, l = 0, last = -1, auxLast = 0;
   IntervalNode *traveler;
-  std::unordered_map<int, int> possiblePos;
+  std::set<int> possiblePos;
   // std::vector<int> possiblePos;
   while (i < n) {
     traveler = trie->root;
@@ -90,22 +92,29 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
            traveler->getTransition(alph.getValue(t[i + l])) != NULL) {
       traveler = traveler->getTransition(alph.getValue(t[i + l]));
       l += 1;
+      /*
       for (int j = 0; j < traveler->positions.size(); ++j) {
-        possiblePos[l - traveler->positions[j]] = l;
+        if (traveler->positions[j] == m - 1)
+          possiblePos[l - traveler->positions[j] - 1] = l;
       }
+      */
+      if (traveler->positions.count(m - 1) != 0)
+        possiblePos.insert(l - m - 2);
+    }
+    for (const auto &pos : traveler->positions) {
+      possiblePos.insert(l - pos - 1);
     }
     // possiblePos = traveler->positions;
     for (const auto &myPair : possiblePos) {
       // std::wcout << i << " " << i + l << "-" << myPair.first << " // \n";
-      if (i + myPair.first - 1 <= last || i + myPair.first - 1 + m >= n)
+      if (i + myPair <= last || i + myPair + m - 1 >= n)
         continue;
       // std::wcout << i + myPair.first - 1 << " : " << t.substr(i +
       // myPair.first - 1, m) << " \n ";
-      if (isDeltaGammaMatch(p, t.substr(i + myPair.first - 1, m), delta,
-                            gamma)) {
-        answ.push_back(i + myPair.first - 1);
+      if (isDeltaGammaMatch(p, t.substr(i + myPair, m), delta, gamma)) {
+        answ.push_back(i + myPair);
       }
-      auxLast = i + myPair.first - 1;
+      auxLast = std::max(i + myPair, auxLast);
     }
     last = auxLast;
     i += m - l + 1;
@@ -141,7 +150,7 @@ DeltaBMAlgos::IntervalNode::buildTransition(int c, int delta) {
       inDeltaC.second = childrens[i]->i.second;
       if (lastInter != -1) {
         for (const auto &pos : childrens[lastInter]->positions)
-          childrens[i]->positions.push_back(pos);
+          childrens[i]->positions.insert(pos);
         toDelete[lastInter] = 0;
       }
       lastInter = i;
@@ -201,7 +210,7 @@ void DeltaBMAlgos::DeltaFactorTrie::insertKFactor(std::wstring_view text) {
       }
       traveler =
           traveler->buildTransition(innerAlph.getValue(factors[j][l]), delta);
-      traveler->positions.push_back(j + l);
+      traveler->positions.insert(j + l);
     }
   }
 }
@@ -223,7 +232,7 @@ void DeltaBMAlgos::DeltaFactorTrie::insertSuffixes(std::wstring_view text) {
         }
         traveler =
             traveler->buildTransition(innerAlph.getValue(factors[j][l]), delta);
-        traveler->positions.push_back(j + l);
+        traveler->positions.insert(j + l);
       }
     }
     /*

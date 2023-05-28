@@ -14,7 +14,8 @@ BitwiseAlgos::BitSet BitwiseAlgos::sum(BitSet a, BitSet b) {
   // bool carry = false;
   BitSet answ(0);
 #if USE_MORE_MACHINE_WORD
-  for (short int i = 0; WORD_LEN * i < MAX_BITS; ++i) {
+  size_t i = 0;
+  while (WORD_LEN * i < MAX_BITS) {
     aSub = aSub < bSub;
     // aSub += crop(a >> (WORD_LEN * i));
     aSub += crop(a);
@@ -26,10 +27,35 @@ BitwiseAlgos::BitSet BitwiseAlgos::sum(BitSet a, BitSet b) {
     answ |= BitSet(aSub) << (WORD_LEN * i);
     a >>= WORD_LEN;
     b >>= WORD_LEN;
+    i++;
   }
 #endif
   return answ;
 }
+
+std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
+                                         std::wstring_view p, int delta,
+                                         int gamma) {
+#if USE_MORE_MACHINE_WORD
+  return auxBackwardScan(t, p, delta, gamma);
+#else
+  int m = p.length();
+  int n = t.length();
+  if (gamma < 0)
+    gamma = m * delta;
+  int d = std::floor(std::log2(delta * m)) + 1;
+  // int l = 1 + std::floor(std::log2(gamma + 1)) + 1;
+  if (m * d <= WORD_LEN) {
+    return auxShiftPlus(t, p, delta, gamma);
+  }
+  std::vector<int> answ;
+  for (const auto &pos :
+       auxShiftPlus(t, p.substr(0, std::floor(WORD_LEN / d)), delta, gamma))
+    if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta, gamma))
+      answ.push_back(pos);
+  return answ;
+#endif
+};
 
 /*
     -> shiftPlus computes all the Delta-Gamma matches of a pattern 'p' in a text
@@ -39,9 +65,9 @@ BitwiseAlgos::BitSet BitwiseAlgos::sum(BitSet a, BitSet b) {
    a Delta match and if the number formed by the last d bits we have a Gamma
    match.
 */
-std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
-                                         std::wstring_view p, int delta,
-                                         int gamma) {
+std::vector<int> BitwiseAlgos::auxShiftPlus(std::wstring_view t,
+                                            std::wstring_view p, int delta,
+                                            int gamma) {
   int m = p.length();
   int n = t.length();
   if (gamma < 0)
@@ -86,7 +112,7 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
 // Add in the first bits the char difference.
 #if USE_MORE_MACHINE_WORD
     GState = sum((GState >> d), GTable[alph.getIndex(t[i])]);
-    // GState = (GState >> d) + GTable[alph.getIndex(t[i])];
+    // GState = (GState >> d) ^ GTable[alph.getIndex(t[i])];
 #else
     GState = (GState >> d) + GTable[alph.getIndex(t[i])];
 #endif

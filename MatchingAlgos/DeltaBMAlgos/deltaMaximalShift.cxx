@@ -79,12 +79,12 @@ std::vector<int> DeltaBMAlgos::deltaMax(std::wstring_view p, int delta,
   }
   // Add dMax for m
   dMax.push_back(period);
-
+  /*
   std::wcout << " DMAX" << std::endl;
   for (const auto &pos : dMax)
     std::wcout << pos << ", ";
   std::wcout << "\n";
-
+  */
   return dMax;
 }
 std::vector<int> DeltaBMAlgos::maxShiftPerm(std::wstring_view p, int delta) {
@@ -110,10 +110,11 @@ std::vector<int> DeltaBMAlgos::maxShiftPerm(std::wstring_view p, int delta) {
   });
   // Permutation of m is m!
   per.push_back(m);
+  /*
   std::wcout << "Permutation \n";
   for (const auto &pos : per)
     std::wcout << pos << ", ";
   std::wcout << "\n";
-
+  */
   return per;
 }

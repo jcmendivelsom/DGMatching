@@ -1,13 +1,31 @@
 #include "BitwiseAlgos.h"
 #include <string>
 
+std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t,
+                                       std::wstring_view p) {
+#if USE_MORE_MACHINE_WORD
+  return auxShiftOr(t, p);
+#else
+
+  if (p.length() <= MAX_BITS) {
+    return auxShiftOr(t, p);
+  }
+  std::vector<int> answ;
+  for (const auto &pos : auxShiftOr(t, p.substr(0, WORD_LEN)))
+    if (isDeltaGammaMatch(t.substr(pos, p.length()), p, 0))
+      answ.push_back(pos);
+  return answ;
+#endif
+};
+
 /*
     -> shiftOr computes all the exact matches of a pattern 'x' in a text 'y' by
    doing some bitwise operations using a precomputed table for every element in
    the alphabet (ETable) and a status match bitstring (EState). If there is a
    zero in the m-1 position of EState we found a match!
 */
-std::vector<int> BitwiseAlgos::shiftOr(std::wstring_view t, std::wstring_view p) {
+std::vector<int> BitwiseAlgos::auxShiftOr(std::wstring_view t,
+                                          std::wstring_view p) {
   int m = p.length();
   if (m <= 0 || m > MAX_BITS || m > t.length()) {
     throw std::invalid_argument("Invalid parameters! -" + std::to_string(m));

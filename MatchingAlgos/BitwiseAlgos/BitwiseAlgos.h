@@ -10,13 +10,13 @@
 
 /* /////////////////// */
 // Change this to 1 and MAX_BITS use your desired word length.
-#define USE_MORE_MACHINE_WORD 1
+#define USE_MORE_MACHINE_WORD 0
 /* /////////////////// */
 
 constexpr size_t WORD_LEN = 64;
 
 #if USE_MORE_MACHINE_WORD
-constexpr size_t MAX_BITS = 64; // Change this to use your desired word length.
+constexpr size_t MAX_BITS = 190; // Change this to use your desired word length.
 #else
 const size_t MAX_BITS = WORD_LEN;
 #endif
@@ -39,13 +39,22 @@ public:
   using MatchingAlgos::MatchingAlgos;
   std::vector<int> backwardScan(std::wstring_view t, std::wstring_view p,
                                 int delta, int gamma = -1);
+  std::vector<int> auxBackwardScan(std::wstring_view t, std::wstring_view p,
+                                int delta, int gamma = -1);                                
   std::vector<int> forwardScan(std::wstring_view t, std::wstring_view p,
+                               int delta, int gamma = -1);
+  std::vector<int> auxForwardScan(std::wstring_view t, std::wstring_view p,
                                int delta, int gamma = -1);
   std::vector<int> shiftPlus(std::wstring_view t, std::wstring_view p,
                              int delta, int gamma = -1);
+  std::vector<int> auxShiftPlus(std::wstring_view t, std::wstring_view p,
+                             int delta, int gamma = -1);
   std::vector<int> shiftAnd(std::wstring_view t, std::wstring_view p,
                             int delta);
+  std::vector<int> auxShiftAnd(std::wstring_view t, std::wstring_view p,
+                            int delta);
   std::vector<int> shiftOr(std::wstring_view t, std::wstring_view p);
+  std::vector<int> auxShiftOr(std::wstring_view t, std::wstring_view p);
 };
 
 template <size_t BIT_SIZE> class BitwiseAlgos::BitArray {

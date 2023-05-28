@@ -1,13 +1,30 @@
 #include "BitwiseAlgos.h"
 
+std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t,
+                                        std::wstring_view p, int delta) {
+#if USE_MORE_MACHINE_WORD
+  return auxShiftAnd(t, p, delta);
+#else
+
+  if (p.length() <= WORD_LEN) {
+    return auxShiftAnd(t, p, delta);
+  }
+  std::vector<int> answ;
+  for (const auto &pos : auxShiftAnd(t, p.substr(0, WORD_LEN), delta))
+    if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta))
+      answ.push_back(pos);
+  return answ;
+#endif
+};
+
 /*
     -> shiftAnd computes all the Delta matches of a pattern 'p' in a text 't' by
    doing some bitwise operations using a precomputed table for every element in
    the alphabet (DTable) and a status match bitstring (DState). If there is a
    one in the m-1 position of DState we found a Delta match!
 */
-std::vector<int> BitwiseAlgos::shiftAnd(std::wstring_view t,
-                                        std::wstring_view p, int delta) {
+std::vector<int> BitwiseAlgos::auxShiftAnd(std::wstring_view t,
+                                           std::wstring_view p, int delta) {
   int m = p.length();
   int n = t.length();
   if (m <= 0 || m > MAX_BITS || m > n || delta < 0) {

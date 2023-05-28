@@ -64,7 +64,7 @@ class DeltaBMAlgos::IntervalNode {
   Interval i;
 
 public:
-  std::vector<int> positions;
+  std::set<int> positions;
   std::vector<IntervalNode *> childrens;
   IntervalNode(int minVal, int maxVal, int a, int b);
   IntervalNode *buildTransition(int c, int delta);

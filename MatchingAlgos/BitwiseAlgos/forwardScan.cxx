@@ -1,5 +1,29 @@
 #include "BitwiseAlgos.h"
 
+std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
+                                           std::wstring_view p, int delta,
+                                           int gamma) {
+#if USE_MORE_MACHINE_WORD
+  return auxForwardScan(t, p, delta, gamma);
+#else
+  int m = p.length();
+  int n = t.length();
+  if (gamma < 0)
+    gamma = m * delta;
+  // int l = 1 + std::floor(std::log2(gamma + 1)) + 1;
+  int l = 1 + std::ceil(std::log2(gamma + 1));
+  if (m * l <= WORD_LEN) {
+    return auxForwardScan(t, p, delta, gamma);
+  }
+  std::vector<int> answ;
+  for (const auto &pos :
+       auxForwardScan(t, p.substr(0, std::floor(WORD_LEN / l)), delta, gamma))
+    if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta, gamma))
+      answ.push_back(pos);
+  return answ;
+#endif
+};
+
 /*
     -> forwardScan computes all the Delta-Gamma matches of a pattern 'p' in a
    text 't' by doing some bitwise operations a precomputed table for
@@ -7,9 +31,9 @@
    bitstring (DState). If there is a zero in the m*l-1 position of
    DState we found a Delta-Gamma match.
 */
-std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
-                                           std::wstring_view p, int delta,
-                                           int gamma) {
+std::vector<int> BitwiseAlgos::auxForwardScan(std::wstring_view t,
+                                              std::wstring_view p, int delta,
+                                              int gamma) {
   int m = p.length();
   int n = t.length();
   if (gamma < 0)
@@ -54,7 +78,7 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
 // Compute the change led by the entering character.
 #if USE_MORE_MACHINE_WORD
     DState = sum((DState & ~H), BTable[alph.getIndex(t[j])]) | H;
-    // DState = ((DState & ~H) + BTable[alph.getIndex(t[j])]) | H;
+    // DState = ((DState & ~H) ^ BTable[alph.getIndex(t[j])]) | H;
 #else
     DState = ((DState & ~H) + BTable[alph.getIndex(t[j])]) | H;
 #endif
