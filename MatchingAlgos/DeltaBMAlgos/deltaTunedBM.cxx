@@ -103,7 +103,7 @@ std::vector<int> DeltaBMAlgos::deltaTunedBM(std::wstring_view t,
       j += s;
     }
   } catch (const std::out_of_range &e) {
-    std::wcout << "nk \n";
+    std::wcout<<"";
   }
   if (answ.empty())
     return {-1};

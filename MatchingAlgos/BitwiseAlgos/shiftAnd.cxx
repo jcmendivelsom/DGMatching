@@ -55,7 +55,7 @@ std::vector<int> BitwiseAlgos::auxShiftAnd(std::wstring_view t,
     if ((~DState & (BitSet(1) << (m - 1))) == 0)
       answ.push_back(i - m + 1);
   }
-  if (answ.empty())
-    return {-1};
+  // if (answ.empty())
+    // return {-1};
   return answ;
 }

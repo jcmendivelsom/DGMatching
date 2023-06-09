@@ -20,5 +20,6 @@ public:
                          int gamma = -1);
 };
 // UTIL FUNCTIONS
+std::vector<std::wstring> getArrText(std::string filePath, bool isNumber = false);
 std::wstring getText(std::string filePath, bool isNumber = false);
 std::vector<int> getMIDINumbers(std::string filePath);

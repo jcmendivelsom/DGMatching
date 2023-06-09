@@ -16,6 +16,8 @@ std::vector<int> BitwiseAlgos::backwardScan(std::wstring_view t,
     return auxBackwardScan(t, p, delta, gamma);
   }
   std::vector<int> answ;
+  if (std::floor(WORD_LEN / l) <= 1)
+    return answ;
   for (const auto &pos :
        auxBackwardScan(t, p.substr(0, std::floor(WORD_LEN / l)), delta, gamma))
     if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta, gamma))
@@ -101,7 +103,7 @@ std::vector<int> BitwiseAlgos::auxBackwardScan(std::wstring_view t,
     }
     pos += last;
   }
-  if (answ.empty())
-    return {-1};
+  // if (answ.empty())
+  // return {-1};
   return answ;
 }

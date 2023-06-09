@@ -87,23 +87,65 @@ std::wstring getText(std::string filePath, bool isNumber) {
   return answ;
 }
 
+std::vector<std::wstring> getArrText(std::string filePath, bool isNumber) {
+  /* If your native locale doesn't use UTF-8 encoding
+   * you need to replace the empty string with a
+   * locale like "en_US.utf8"
+   */
+  std::locale::global(std::locale(""));
+  std::cout.imbue(std::locale());
+  // Open the file (encoded with UTF-8) and read the values.
+  std::wifstream paramFileW(filePath, std::ios::binary);
+  paramFileW.imbue(std::locale("en_US.UTF-8"));
+  if (paramFileW.fail()) {
+    throw std::invalid_argument("Can't open the specified file path: " +
+                                filePath);
+  }
+  std::wstring line, num, aux;
+  std::vector<std::wstring> answ;
+  long n;
+  std::wstringstream ss;
+  while (paramFileW.good()) {
+    std::getline(paramFileW, line);
+    ss = std::wstringstream(line);
+    if (isNumber) {
+      aux = L"";
+      while (ss >> n) {
+        aux += static_cast<wchar_t>(n);
+        if (ss.peek() == L',')
+          ss.ignore();
+      }
+      if (!aux.empty())
+        answ.push_back(aux);
+      /*
+       while (std::getline(ss, num, L','))
+         answ += (wchar_t)std::stol(num);
+       */
+    } else {
+      answ.push_back(line);
+    }
+  }
+  paramFileW.close();
+  return answ;
+}
+
 ////////////////////////////////////////
 /* READ MIDI NOTES FROM MIDI FILE. CODE FROM:
   https://github.com/OneLoneCoder/Javidx9/blob/master/PixelGameEngine/SmallerProjects/OneLoneCoder_PGE_MIDI.cpp
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-	"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-	HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-	THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+        LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+        A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+        HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+        DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+        THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	Relevant Video: https://youtu.be/040BKtnDdg0
+        Relevant Video: https://youtu.be/040BKtnDdg0
 */
 ////////////////////////////////////////
 
@@ -452,7 +494,7 @@ std::vector<int> getMIDINumbers(std::string filePath) {
 
   // Convert Time Events to Notes
   for (auto &track : vecTracks) {
-    std::wcout << "\n ===== NEW TRACK ==== \n" ;
+    std::wcout << "\n ===== NEW TRACK ==== \n";
     uint32_t nWallTime = 0;
 
     std::vector<MidiNote> listNotesBeingProcessed;

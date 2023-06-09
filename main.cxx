@@ -5,6 +5,9 @@
 #include "StrMatchConfig.h"
 #include <chrono>
 #include <iomanip>
+#include <iostream>
+#include <string>
+#include <string_view>
 
 int main(int argc, char *argv[]) {
   char algoType;
@@ -55,11 +58,191 @@ int main(int argc, char *argv[]) {
     yIn = getText(std::string(pathText.begin(), pathText.end()), true);
     std::wcout << yIn.size() << std::endl;
     break;
-  case 3:
+  case 3: {
     std::wcout << "Enter MUSIC path:" << std::endl;
     std::wcin >> pathText;
     getMIDINumbers(std::string(pathText.begin(), pathText.end()));
     return 0;
+  }
+  case 4: {
+    alphPath = "../MatchingAlgos/Alphabet/abc.txt";
+    bool numCase = true;
+    int numAlpBoundsL = 0;
+    int attempt = 0;
+    int numAlpBoundsH = 127;
+    yIn = getText("../expr/midiExample.txt", numCase);
+    std::wcout << yIn.length() << std::endl;
+    std::wstring_view yStr(yIn);
+    std::vector<std::wstring> patterns =
+        getArrText("../expr/patMidi.txt", numCase);
+    BitwiseAlgos bitAlgos = numCase ? BitwiseAlgos(numAlpBoundsL, numAlpBoundsH)
+                                    : BitwiseAlgos(alphPath);
+    DeltaBMAlgos deltaAlgos = numCase
+                                  ? DeltaBMAlgos(numAlpBoundsL, numAlpBoundsH)
+                                  : DeltaBMAlgos(alphPath);
+    OccurrenceAlgos occAlgos =
+        numCase ? OccurrenceAlgos(numAlpBoundsL, numAlpBoundsH)
+                : OccurrenceAlgos(alphPath);
+    int i = 0;
+    int delta;
+    int gamma;
+    int n_pat = 5;
+    std::vector<int> indexes;
+    std::ios_base::sync_with_stdio(false);
+    std::vector<double> time_taken(15, 0);
+
+    for (int i = 0; i < patterns.size(); ++i) {
+    // for (int i = attempt * n_pat; i < (attempt + 1) * n_pat; ++i) {
+      ////////////////////
+      delta = 3;
+      gamma = delta * patterns[i].length() / 2;
+      ////////////////////
+      ///**///**//
+      auto start = std::chrono::high_resolution_clock::now();
+      indexes = bitAlgos.shiftAnd(yStr, patterns[i], delta);
+      auto end = std::chrono::high_resolution_clock::now();
+      time_taken[0] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout<<"____--___--___--___"<<std::endl;
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = bitAlgos.shiftPlus(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[1] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout<<"____--___--___--___"<<std::endl;
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = bitAlgos.forwardScan(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[2] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout<<"____--___--___--___"<<std::endl;
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = bitAlgos.backwardScan(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[3] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout<<"____--___--___--___"<<std::endl;
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaTunedBM(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[4] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaBM1(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[5] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaBM2(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[6] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaBM3(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[7] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout<<"____--___--___--___"<<std::endl;
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaFastSearch(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[8] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes =
+          deltaAlgos.deltaForwardFastSearch(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[9] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.trieSearch(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[10] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = deltaAlgos.deltaMaximalShift(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[11] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = occAlgos.deltaSkipSearch(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[12] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = occAlgos.intervalSearch(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[13] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      ///**///**//
+      start = std::chrono::high_resolution_clock::now();
+      indexes = occAlgos.bruteForce(yStr, patterns[i], delta, gamma);
+      end = std::chrono::high_resolution_clock::now();
+      time_taken[14] +=
+          std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+              .count();
+      // std::wcout << "____--___--___--___" << std::endl;
+      /***************************************************/
+      if (i == 0) {
+        std::wcout << "m;";
+        //std::wcout << "s;";
+        std::wcout << "shAND;";
+        std::wcout << "shPLUS;";
+        std::wcout << "forSCAN;";
+        std::wcout << "bakSCAN;";
+        std::wcout << "TUNED;";
+        std::wcout << "BM1;";
+        std::wcout << "RFAC;";
+        std::wcout << "BM3;";
+        std::wcout << "FASE;";
+        std::wcout << "FFSE;";
+        std::wcout << "varBM1;";
+        std::wcout << "MAXSh;";
+        std::wcout << "SKIP;";
+        std::wcout << "INTSEA;";
+        std::wcout << "BRFO;" << std::endl;
+      }
+      if (i % n_pat == n_pat - 1) {
+        std::wcout << patterns[i].length() << ";";
+        // std::wcout <<numAlpBoundsH - numAlpBoundsL << ";";
+        for (int k = 0; k < time_taken.size(); ++k) {
+          std::wcout << std::fixed << time_taken[k] / n_pat * 1e-9
+                     << std::setprecision(9) << ";";
+        }
+        std::wcout << std::endl;
+
+        time_taken = std::vector<double>(15, 0);
+      }
+    }
+    return 0;
+  }
   default:
     std::wcout << "Bad init parameter! :(" << std::endl;
     return 1;

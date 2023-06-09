@@ -1,4 +1,5 @@
 #include "BitwiseAlgos.h"
+#include <iostream>
 
 unsigned long long BitwiseAlgos::crop(BitSet x) {
 #if USE_MORE_MACHINE_WORD
@@ -49,10 +50,17 @@ std::vector<int> BitwiseAlgos::shiftPlus(std::wstring_view t,
     return auxShiftPlus(t, p, delta, gamma);
   }
   std::vector<int> answ;
-  for (const auto &pos :
-       auxShiftPlus(t, p.substr(0, std::floor(WORD_LEN / d)), delta, gamma))
+  int l;
+  for (l = m; l > 1 && l * (std::floor(std::log2(delta * l)) + 1) > WORD_LEN; --l);
+  if (l <= 1)
+    return answ;
+  // std::wcout << "* " << std::floor(WORD_LEN / d) << std::endl;
+  for (const auto &pos : auxShiftPlus(t, p.substr(0, l), delta, gamma)) {
+    // std::wcout << "*" << pos;
     if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta, gamma))
       answ.push_back(pos);
+  }
+  // std::wcout << "*" << std::endl;
   return answ;
 #endif
 };
@@ -122,7 +130,7 @@ std::vector<int> BitwiseAlgos::auxShiftPlus(std::wstring_view t,
         crop(GState & ~(~BitSet(1) << (d - 1))) <= (long)gamma)
       answ.push_back(i - m + 1);
   }
-  if (answ.empty())
-    return {-1};
+  // if (answ.empty())
+  // return {-1};
   return answ;
 }

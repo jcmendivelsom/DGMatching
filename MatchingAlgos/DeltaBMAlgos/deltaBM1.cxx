@@ -1,4 +1,6 @@
 #include "DeltaBMAlgos.h"
+#include <chrono>
+#include <iomanip>
 
 /////////////////// ALGORITHMS ///////////////////
 
@@ -74,7 +76,17 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
   // PREPROCESSING PHASE
   std::vector<int> answ;
   // Compute the Delta Factor Trie for all the k-factors.
+  // auto start = std::chrono::high_resolution_clock::now();
   DeltaFactorTrie *trie = new DeltaFactorTrie(alph, p, delta, m);
+  // auto end = std::chrono::high_resolution_clock::now();
+  // double time_taken =
+  // std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+  // time_taken *= 1e-9;
+  /*
+  std::wcout << "Time building trie : " << std::fixed << time_taken
+             << std::setprecision(9);
+  std::wcout << " sec" << std::endl;
+  */
   // Print the entire Delta Factor Trie
   // trie->printTrie();
 
@@ -93,13 +105,19 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
       traveler = traveler->getTransition(alph.getValue(t[i + l]));
       l += 1;
       /*
-      for (int j = 0; j < traveler->positions.size(); ++j) {
-        if (traveler->positions[j] == m - 1)
-          possiblePos[l - traveler->positions[j] - 1] = l;
+      for (const auto &pos : traveler->positions) {
+        possiblePos.insert(l - pos - 1);
       }
       */
-      if (traveler->positions.count(m - 1) != 0)
-        possiblePos.insert(l - m - 2);
+      // possiblePos.merge(traveler->positions);
+
+      if (traveler->positions.count(m - 1) != 0) {
+        possiblePos.insert(l - m - 1);
+        // auxLast = std::max(i + l - m - 2, auxLast);
+      }
+    }
+    if (l == 0) {
+      i += m + 1;
     }
     for (const auto &pos : traveler->positions) {
       possiblePos.insert(l - pos - 1);
@@ -107,17 +125,18 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
     // possiblePos = traveler->positions;
     for (const auto &myPair : possiblePos) {
       // std::wcout << i << " " << i + l << "-" << myPair.first << " // \n";
-      if (i + myPair <= last || i + myPair + m - 1 >= n)
+      if (i + myPair < 0 || i + myPair + m - 1 >= n)
         continue;
       // std::wcout << i + myPair.first - 1 << " : " << t.substr(i +
       // myPair.first - 1, m) << " \n ";
       if (isDeltaGammaMatch(p, t.substr(i + myPair, m), delta, gamma)) {
         answ.push_back(i + myPair);
       }
+      // auxLast = i + myPair;
       auxLast = std::max(i + myPair, auxLast);
     }
     last = auxLast;
-    i += m - l + 1;
+    i = std::max(i + m - l + 1, last + m);
   }
   if (answ.empty())
     return {-1};

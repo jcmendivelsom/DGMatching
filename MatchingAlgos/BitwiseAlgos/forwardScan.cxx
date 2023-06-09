@@ -16,6 +16,8 @@ std::vector<int> BitwiseAlgos::forwardScan(std::wstring_view t,
     return auxForwardScan(t, p, delta, gamma);
   }
   std::vector<int> answ;
+  if (std::floor(WORD_LEN / l) <= 1)
+    return answ;
   for (const auto &pos :
        auxForwardScan(t, p.substr(0, std::floor(WORD_LEN / l)), delta, gamma))
     if (isDeltaGammaMatch(t.substr(pos, p.length()), p, delta, gamma))
@@ -87,7 +89,7 @@ std::vector<int> BitwiseAlgos::auxForwardScan(std::wstring_view t,
     if ((DState & (BitSet(1) << (m * l - 1))) == BitSet(0))
       answ.push_back(j - m + 1);
   }
-  if (answ.empty())
-    return {-1};
+  // if (answ.empty())
+    // return {-1};
   return answ;
 }
