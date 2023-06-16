@@ -28,6 +28,69 @@ std::vector<int> DeltaBMAlgos::deltaBM2(std::wstring_view t,
 
   // auto start = std::chrono::high_resolution_clock::now();
   // Compute the Delta Suffix Automaton for all the k-factors.
+  DeltaFactorTrie *dsa = new DeltaFactorTrie(alph, rev, delta, m);
+  // SEARCHING PHASE
+  int period = m;
+  int j = 0, i = 0, state = 0, shift = 0;
+  IntervalNode *traveler;
+  while (j <= n - m) {
+    i = m - 1;
+    traveler = dsa->root;
+    shift = m;
+
+    while (i + j >= 0 && i >= 0) {
+      traveler = traveler->getTransition(alph.getValue(t[i+j]));
+      // state = dsa.travelWith(state, alph.getValue(t[i + j]));
+      if (traveler == NULL) {
+        break;
+      }
+      // if (dsa.isTerminal(state)) 
+      if (traveler->positions.count(m - 1) != 0){
+        period = shift;
+        shift = i;
+      }
+      --i;
+    }
+    if (i < 0) {
+      if (isDeltaGammaMatch(p, t.substr(j, m), delta, gamma)) {
+        answ.push_back(j);
+      }
+      shift = period;
+    }
+    j += shift;
+  }
+  if (answ.empty()) {
+    return {-1};
+  }
+  return answ;
+}
+
+std::vector<int> DeltaBMAlgos::deltaRevFact(std::wstring_view t,
+                                        std::wstring_view p, int delta,
+                                        int gamma) {
+  int m = p.length();
+  int n = t.length();
+  if (m <= 0 || m > n || delta < 0) {
+    throw std::invalid_argument("Invalid parameters! ");
+  }
+  if (gamma < 0) {
+    gamma = delta * m;
+  }
+  // PREPROCESSING PHASE
+  std::vector<int> answ;
+  // Make reverse of pattern
+  std::wstring rev(p);
+  wchar_t temp;
+  int k = m - 1;
+  for (int i = 0; i <= (m / 2); ++i) {
+    temp = p[i];
+    rev[i] = p[k];
+    rev[k] = temp;
+    k--;
+  }
+
+  // auto start = std::chrono::high_resolution_clock::now();
+  // Compute the Delta Suffix Automaton for all the k-factors.
   DeltaSuffixAutomaton dsa = DeltaSuffixAutomaton(alph, rev, delta);
   // Print the entire Delta Suffix Automaton
   // dsa.printAutomaton();

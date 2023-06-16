@@ -54,6 +54,8 @@ public:
                               int delta, int gamma);
   std::vector<int> deltaBM2(std::wstring_view t, std::wstring_view p, int delta,
                             int gamma = -1);
+  std::vector<int> deltaRevFact(std::wstring_view t, std::wstring_view p, int delta,
+                            int gamma = -1);                            
   std::vector<int> deltaBM3(std::wstring_view t, std::wstring_view p, int delta,
                             int gamma = -1, int k = 2);
 };

@@ -103,40 +103,38 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
     while (i + l < n &&
            traveler->getTransition(alph.getValue(t[i + l])) != NULL) {
       traveler = traveler->getTransition(alph.getValue(t[i + l]));
-      l += 1;
       /*
       for (const auto &pos : traveler->positions) {
         possiblePos.insert(l - pos - 1);
       }
       */
       // possiblePos.merge(traveler->positions);
-
+      l += 1;
       if (traveler->positions.count(m - 1) != 0) {
-        possiblePos.insert(l - m - 1);
+        possiblePos.insert(m - 1 + l - 1);
         // auxLast = std::max(i + l - m - 2, auxLast);
       }
     }
-    if (l == 0) {
-      i += m + 1;
-    }
     for (const auto &pos : traveler->positions) {
-      possiblePos.insert(l - pos - 1);
+      possiblePos.insert(pos + l - 1);
     }
     // possiblePos = traveler->positions;
-    for (const auto &myPair : possiblePos) {
+    // std::wcout << "**" << last << " \n ";
+    for (const auto &j : possiblePos) {
       // std::wcout << i << " " << i + l << "-" << myPair.first << " // \n";
-      if (i + myPair < 0 || i + myPair + m - 1 >= n)
+      if (i - j <= last || i - j + m - 1 >= n)
         continue;
       // std::wcout << i + myPair.first - 1 << " : " << t.substr(i +
       // myPair.first - 1, m) << " \n ";
-      if (isDeltaGammaMatch(p, t.substr(i + myPair, m), delta, gamma)) {
-        answ.push_back(i + myPair);
+      // std::wcout << "::" << i - j << " \n ";
+      if (isDeltaGammaMatch(p, t.substr(i - j, m), delta, gamma)) {
+        answ.push_back(i - j);
+        last = i - j;
       }
-      // auxLast = i + myPair;
-      auxLast = std::max(i + myPair, auxLast);
+      auxLast = std::max(i - j, auxLast);
     }
     last = auxLast;
-    i = std::max(i + m - l + 1, last + m);
+    i = std::max(i + m - l + 1, last + 1);
   }
   if (answ.empty())
     return {-1};
