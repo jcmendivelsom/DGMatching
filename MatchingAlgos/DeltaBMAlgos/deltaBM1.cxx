@@ -129,7 +129,6 @@ std::vector<int> DeltaBMAlgos::trieSearch(std::wstring_view t,
       // std::wcout << "::" << i - j << " \n ";
       if (isDeltaGammaMatch(p, t.substr(i - j, m), delta, gamma)) {
         answ.push_back(i - j);
-        last = i - j;
       }
       auxLast = std::max(i - j, auxLast);
     }

@@ -66,15 +66,15 @@ int main(int argc, char *argv[]) {
   }
   case 4: {
     alphPath = "../MatchingAlgos/Alphabet/abc.txt";
-    bool numCase = true;
+    bool numCase = false;
     int numAlpBoundsL = 0;
-    int attempt = 2;
+    int attempt = 0;
     int numAlpBoundsH = 500;
-    yIn = getText("../expr/zipf.txt", numCase);
+    yIn = getText("../expr/letfreq.txt", numCase);
     std::wcout << yIn.length() << std::endl;
     std::wstring_view yStr(yIn);
     std::vector<std::wstring> patterns =
-        getArrText("../expr/patZipf.txt", numCase);
+        getArrText("../expr/patAlphFrec.txt", numCase);
     BitwiseAlgos bitAlgos = numCase ? BitwiseAlgos(numAlpBoundsL, numAlpBoundsH)
                                     : BitwiseAlgos(alphPath);
     DeltaBMAlgos deltaAlgos = numCase
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     std::vector<double> time_taken(15, 0);
 
     // Print Header
-    std::wcout << "d;";
+    std::wcout << "m;";
     // std::wcout << "m;";
     // std::wcout << "s;";
     std::wcout << "shAND;";
@@ -113,11 +113,11 @@ int main(int argc, char *argv[]) {
     std::wcout << "INTSEA;";
     std::wcout << "BRFO;" << std::endl;
 
-    for (int jj = 0; jj < vecDeltas.size(); ++jj)
-      // for (int i = 0; i < patterns.size(); ++i) {
-      for (int i = attempt * n_pat; i < (attempt + 1) * n_pat; ++i) {
+    // for (int jj = 0; jj < vecDeltas.size(); ++jj)
+    for (int i = 0; i < patterns.size(); ++i) {
+    // for (int i = attempt * n_pat; i < (attempt + 1) * n_pat; ++i) {
         ////////////////////
-        delta = vecDeltas[jj];
+        delta = 1;
         gamma = delta * patterns[i].length() / 2;
         // std::wcout << "???" << patterns[i].length() << std::endl;
         ////////////////////
@@ -162,8 +162,7 @@ int main(int argc, char *argv[]) {
                 .count();
         ///**///**//
         start = std::chrono::high_resolution_clock::now();
-        // if(jj < 17)
-        //indexes = deltaAlgos.deltaBM1(yStr, patterns[i], delta, gamma);
+        // indexes = deltaAlgos.deltaBM1(yStr, patterns[i], delta, gamma);
         end = std::chrono::high_resolution_clock::now();
         time_taken[5] +=
             std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
@@ -177,7 +176,7 @@ int main(int argc, char *argv[]) {
                 .count();
         ///**///**//
         start = std::chrono::high_resolution_clock::now();
-        // if (jj < 10) indexes = deltaAlgos.deltaBM3(yStr, patterns[i], delta, gamma);
+        // indexes = deltaAlgos.deltaBM3(yStr, patterns[i], delta, gamma);
         end = std::chrono::high_resolution_clock::now();
         time_taken[7] +=
             std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
@@ -199,6 +198,7 @@ int main(int argc, char *argv[]) {
                 .count();
         ///**///**//
         start = std::chrono::high_resolution_clock::now();
+        // if(i < n_pat * 11) 
         indexes = deltaAlgos.trieSearch(yStr, patterns[i], delta, gamma);
         end = std::chrono::high_resolution_clock::now();
         time_taken[10] +=
@@ -235,9 +235,9 @@ int main(int argc, char *argv[]) {
         // std::wcout << "____--___--___--___" << std::endl;
         /***************************************************/
         if (i % n_pat == n_pat - 1) {
-          // std::wcout << patterns[i].length() << ";";
+          std::wcout << patterns[i].length() << ";";
           // std::wcout <<numAlpBoundsH - numAlpBoundsL << ";";
-          std::wcout << vecDeltas[jj] << ";";
+          // std::wcout << vecDeltas[jj] << ";";
           for (int k = 0; k < time_taken.size(); ++k) {
             std::wcout << std::fixed << time_taken[k] / n_pat * 1e-9
                        << std::setprecision(9) << ";";
